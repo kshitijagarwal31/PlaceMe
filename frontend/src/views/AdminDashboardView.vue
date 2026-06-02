@@ -16,14 +16,17 @@ export default {
 </script>
 
 <style scoped>
+
 .dashboard {
   display: flex;
   min-height: 100vh;
   background: #f5f7fb;
   font-family: Arial, Helvetica, sans-serif;
 }
+
 .main-content {
   flex: 1;
-  padding: 40px;
+  padding: 32px;
 }
+
 </style>

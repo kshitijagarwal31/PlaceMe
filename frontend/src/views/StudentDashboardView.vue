@@ -24,6 +24,6 @@ export default {
 }
 .main-content {
   flex: 1;
-  padding: 40px;
+  padding: 28px;
 }
 </style>

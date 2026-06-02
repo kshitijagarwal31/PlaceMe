@@ -92,7 +92,7 @@
 
         <div class="form-group full">
           <label>Resume (PDF) <span class="required">*</span></label>
-          <!-- ✅ Agar resume pehle se hai toh link dikhao -->
+      
           <div v-if="form.resume && !newResume" class="resume-existing">
             <a :href="form.resume" target="_blank" class="resume-link">📄 View Current Resume</a>
             <button class="btn-change-resume" @click="newResume = true">Change Resume</button>
@@ -124,7 +124,7 @@ export default {
       loading:    true,
       errorMsg:   "",
       successMsg: false,
-      newResume:  false,   // ✅ resume change karna hai ya nahi
+      newResume:  false,   
       resumeFile: null,
       form: {
         name:     "",
@@ -153,7 +153,6 @@ export default {
       }
     },
 
-    // ✅ Backend se profile load karo
     async fetchProfile() {
       this.loading = true
       try {
@@ -180,7 +179,6 @@ export default {
       this.resumeFile = e.target.files[0]
     },
 
-    // ✅ Backend pe save karo
     async saveProfile() {
       const required = ['name', 'username', 'email', 'college', 'cgpa', 'skills']
       const allFilled = required.every(f => this.form[f] !== '')
@@ -190,7 +188,6 @@ export default {
         return
       }
 
-      // ✅ Resume check — pehli baar fill karte time required hai
       if (!this.form.resume && !this.resumeFile) {
         this.errorMsg = "Please upload your resume!"
         return
@@ -199,7 +196,6 @@ export default {
       this.errorMsg = ""
 
       try {
-        // ✅ FormData use karo kyunki resume file hai
         const formData = new FormData()
         formData.append("name",         this.form.name)
         formData.append("username",     this.form.username)
@@ -226,7 +222,7 @@ export default {
 
         this.successMsg = true
         this.newResume  = false
-        await this.fetchProfile()  // ✅ updated data reload karo
+        await this.fetchProfile()  
 
         setTimeout(() => {
           this.successMsg = false
@@ -242,62 +238,88 @@ export default {
 </script>
 
 <style scoped>
+
 .topbar {
-  margin-bottom: 30px;
+  margin-bottom: 26px;
 }
+
 .topbar h1 {
-  font-size: 34px;
+  font-size: 30px;
   color: #111827;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
+
 .topbar p {
   color: #6b7280;
-  font-size: 15px;
+  font-size: 13px;
 }
+
 .profile-grid {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
-  gap: 24px;
+  gap: 18px;
 }
+
 .section-box {
   background: white;
   border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 28px;
+  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
+  padding: 25px;
 }
-.preview-box { text-align: center; }
-.profile-top { margin-bottom: 24px; }
+
+.preview-box {
+  text-align: center;
+}
+
+.profile-top {
+  margin-bottom: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
 .profile-avatar {
-  width: 80px;
-  height: 80px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 34px;
+  font-size: 27px;
   font-weight: 700;
-  margin: 0 auto 16px;
+  margin: 0 auto 12px; 
 }
+
 .profile-top h2 {
-  font-size: 22px;
+  font-size: 18px;
   color: #111827;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
+
 .profile-top p {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 13px;
 }
-.preview-details { text-align: left; }
+
+.preview-details {
+  text-align: left;
+}
+
 .detail-row {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
+  padding: 11px 0;
   border-bottom: 1px solid #f3f4f6;
-  font-size: 14px;
+  font-size: 13px;
 }
-.detail-label { color: #6b7280; }
+
+.detail-label {
+  color: #6b7280;
+}
+
 .detail-value {
   font-weight: 600;
   color: #111827;
@@ -305,112 +327,147 @@ export default {
   max-width: 60%;
   word-break: break-word;
 }
+
 .info-box {
   background: #eff6ff;
   border-radius: 10px;
-  padding: 14px;
-  font-size: 13px;
+  padding: 13px;
+  font-size: 12.5px;
   color: #2563eb;
-  line-height: 1.6;
-  margin-top: 24px;
+  line-height: 1.5;
+  margin-top: 22px;
   text-align: left;
 }
+
 .form-title {
-  font-size: 20px;
+  font-size: 16.5px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
 }
-.form-group { margin-bottom: 18px; }
-.form-group.full { grid-column: span 2; }
+
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-group.full {
+  grid-column: span 2;
+}
+
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
   font-weight: 600;
   color: #374151;
-  font-size: 14px;
+  font-size: 12.5px;
 }
-.required { color: #dc2626; }
+
+.required {
+  color: #dc2626;
+}
+
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 11px 14px;
+  padding: 9px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 13px;
   outline: none;
   box-sizing: border-box;
   font-family: inherit;
   transition: 0.2s;
 }
+
 .form-group input:focus,
 .form-group textarea:focus {
   border-color: #2563eb;
 }
+
 .file-input {
   width: 100%;
-  padding: 8px;
+  padding: 7px;
   border: 1px dashed #cbd5e1;
-  border-radius: 10px;
+  border-radius: 9px;
   background: #f8fafc;
 }
+
 .resume-existing {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
+
 .resume-link {
   color: #2563eb;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   text-decoration: none;
 }
-.resume-link:hover { text-decoration: underline; }
+
+.resume-link:hover {
+  text-decoration: underline;
+}
+
 .btn-change-resume {
   background: #f3f4f6;
   color: #374151;
   border: none;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
 }
-.btn-change-resume:hover { background: #e5e7eb; }
+
+.btn-change-resume:hover {
+  background: #e5e7eb;
+}
+
 .btn-save {
   width: 100%;
-  padding: 13px;
+  padding: 11px;
   background: #2563eb;
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 10px;
+  margin-top: 9px;
   transition: 0.2s;
 }
-.btn-save:hover { background: #1d4ed8; }
+
+.btn-save:hover {
+  background: #1d4ed8;
+}
+
 .success-msg {
   color: #16a34a;
   font-weight: 600;
   text-align: center;
-  margin: 10px 0;
+  margin: 9px 0;
+  font-size: 13px;
 }
+
 .error-msg {
   color: #dc2626;
   font-weight: 600;
   text-align: center;
-  margin: 10px 0;
+  margin: 9px 0;
+  font-size: 13px;
 }
+
 .empty {
   text-align: center;
   color: #9ca3af;
   font-size: 14px;
 }
+
 </style>

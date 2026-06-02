@@ -66,8 +66,8 @@ export default {
 
 .navbar{
   width:100%;
-  height:80px;
-  padding:0 60px;
+  height:62px;
+  padding:0 24px;
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -75,52 +75,53 @@ export default {
   position:sticky;
   top:0;
   z-index:1000;
-  box-shadow:0 4px 16px rgba(0,0,0,0.08);
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
 }
 
 .logo-area{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:8px;
   text-decoration:none;
 }
 
 .logo{
-  width:50px;
-  height:50px;
+  width:38px;
+  height:38px;
   background:white;
-  border-radius:14px;
+  border-radius:8px;
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:26px;
+  font-size:18px;
 }
 
 .logo-title{
-  font-size:24px;
+  font-size:17px;
   font-weight:700;
   color:white;
+  line-height:1.1;
 }
 
 .logo-subtitle{
-  font-size:12px;
+  font-size:9px;
   color:#dbeafe;
-  margin-top:2px;
+  margin-top:1px;
 }
 
 .navbar-right{
   display:flex;
   align-items:center;
-  gap:14px;
+  gap:8px;
 }
 
 .nav-link{
   text-decoration:none;
   color:white;
-  font-size:15px;
+  font-size:13px;
   font-weight:600;
-  padding:10px 14px;
-  border-radius:8px;
+  padding:7px 10px;
+  border-radius:6px;
   transition:0.2s;
 }
 
@@ -132,35 +133,15 @@ export default {
   text-decoration:none;
   background:white;
   color:#2563eb;
-  padding:12px 22px;
-  border-radius:10px;
+  padding:8px 14px;
+  border-radius:7px;
+  font-size:13px;
   font-weight:700;
   transition:0.2s;
 }
 
 .register-btn:hover{
   background:#e0e7ff;
-}
-
-@media(max-width:768px){
-
-  .navbar{
-    padding:18px 20px;
-    height:auto;
-    flex-direction:column;
-    gap:18px;
-  }
-
-  .navbar-right{
-    width:100%;
-    justify-content:center;
-    flex-wrap:wrap;
-  }
-
-  .logo-title{
-    font-size:22px;
-  }
-
 }
 
 </style>

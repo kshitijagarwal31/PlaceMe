@@ -109,48 +109,6 @@
           </div>
         </div>
 
-        <div class="app-section">
-          <h4 class="app-section-title">
-            Applied Drives
-            <span class="app-count">{{ studentApplications.length }}</span>
-          </h4>
-
-          <div v-if="studentApplications.length === 0" class="app-empty">
-            No applications yet
-          </div>
-
-          <div class="app-table-box" v-else>
-            <table class="app-table">
-              <thead>
-                <tr>
-                  <th>S.No</th>
-                  <th>Company</th>
-                  <th>Role</th>
-                  <th>Applied On</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(app, index) in studentApplications" :key="app.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ app.company }}</td>
-                  <td>{{ app.drive }}</td>
-                  <td>{{ app.date }}</td>
-                  <td>
-                    <span :class="[
-                      'status-badge',
-                      app.status === 'Pending'     ? 'status-pending'     :
-                      app.status === 'Shortlisted' ? 'status-shortlisted' :
-                      app.status === 'Selected'    ? 'status-selected'    :
-                      'status-rejected'
-                    ]">{{ app.status }}</span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -225,27 +183,27 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 27px;
 }
 
 .topbar h1 {
-  font-size: 34px;
+  font-size: 31px;
   color: #111827;
   margin-bottom: 4px;
 }
 
 .topbar p {
   color: #6b7280;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .search-input {
-  padding: 11px 14px;
+  padding: 10px 13px;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 14px;
+  border-radius: 9px;
+  font-size: 13px;
   color: #111827;
-  width: 280px;
+  width: 252px;
   outline: none;
   transition: 0.2s;
   background: white;
@@ -257,8 +215,8 @@ export default {
 
 .table-box {
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
@@ -272,17 +230,17 @@ thead {
 }
 
 th {
-  padding: 16px 20px;
+  padding: 14px 18px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
 }
 
 td {
-  padding: 16px 20px;
-  font-size: 15px;
+  padding: 14px 18px;
+  font-size: 14px;
   color: #111827;
   border-bottom: 1px solid #f3f4f6;
   font-weight: 600;
@@ -298,7 +256,7 @@ tr:hover td {
 
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 9px;
   align-items: center;
 }
 
@@ -306,9 +264,9 @@ tr:hover td {
   background: #eff6ff;
   color: #2563eb;
   border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -322,9 +280,9 @@ tr:hover td {
   background: #fee2e2;
   color: #dc2626;
   border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -337,26 +295,26 @@ tr:hover td {
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 13px;
+  padding: 4px 11px;
+  border-radius: 18px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .badge-blacklisted {
   background: #fee2e2;
   color: #dc2626;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 13px;
+  padding: 4px 11px;
+  border-radius: 18px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 15px;
-  padding: 40px 0;
+  font-size: 14px;
+  padding: 36px 0;
 }
 
 .modal-overlay {
@@ -371,29 +329,29 @@ tr:hover td {
 
 .modal {
   background: white;
-  border-radius: 18px;
-  width: 620px;
+  border-radius: 16px;
+  width: 560px;
   max-width: 90%;
   max-height: 85vh;
   overflow-y: auto;
-  padding: 28px;
+  padding: 25px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   position: sticky;
   top: 0;
   background: white;
   z-index: 1;
-  padding-bottom: 16px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .modal-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
@@ -401,10 +359,10 @@ tr:hover td {
 .btn-close {
   background: #f3f4f6;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   color: #374151;
 }
@@ -412,52 +370,52 @@ tr:hover td {
 .detail-top {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  gap: 13px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .avatar-lg {
-  width: 52px;
-  height: 52px;
+  width: 47px;
+  height: 47px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .detail-top h4 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
   flex: 1;
 }
 
 .detail-top p {
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
 }
 
 .detail-rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 28px;
+  gap: 9px;
+  margin-bottom: 25px;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
-  padding-bottom: 10px;
+  font-size: 13px;
+  padding-bottom: 9px;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -476,7 +434,7 @@ tr:hover td {
 .resume-link {
   color: #2563eb;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
   text-decoration: none;
 }
 
@@ -489,33 +447,33 @@ tr:hover td {
 }
 
 .app-section-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 14px;
+  margin-bottom: 13px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .app-count {
   background: #eff6ff;
   color: #2563eb;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 13px;
+  padding: 2px 9px;
+  border-radius: 18px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .app-empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 14px;
-  padding: 20px 0;
+  font-size: 13px;
+  padding: 18px 0;
 }
 
 .app-table-box {
-  border-radius: 12px;
+  border-radius: 11px;
   border: 1px solid #e5e7eb;
   overflow: hidden;
 }
@@ -530,17 +488,17 @@ tr:hover td {
 }
 
 .app-table th {
-  padding: 12px 16px;
+  padding: 11px 14px;
   text-align: left;
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .app-table td {
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 11px 14px;
+  font-size: 13px;
   color: #111827;
   border-bottom: 1px solid #f3f4f6;
   font-weight: 500;
@@ -555,9 +513,9 @@ tr:hover td {
 }
 
 .status-badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 18px;
+  font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -573,8 +531,8 @@ tr:hover td {
 }
 
 .status-selected {
-  background: #dcfce7;
-  color: #16a34a;
+  background: #dbeafe;
+  color: #2563eb;
 }
 
 .status-rejected {

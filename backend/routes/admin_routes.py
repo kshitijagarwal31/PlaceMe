@@ -1,5 +1,5 @@
-from flask import Blueprint, request, make_response, jsonify 
-from flask_security import auth_required, roles_required 
+from flask import Blueprint, request, make_response, jsonify
+from flask_security import auth_required, roles_required, current_user
 from user_datastore import user_datastore 
 from database import db 
 from models import User, Role, StudentProfile, CompanyProfile, PlacementDrive, Application
@@ -55,6 +55,7 @@ def admin_dashboard_data():
             "total_placements":   total_placements,
             "placement_rate":     placement_rate,
         },
+        "admin_name": current_user.name,
         "pending_companies": pending_companies,
         "pending_drives":    pending_drives,
     }), 200
@@ -162,17 +163,49 @@ def admin_placement_drives():
 @roles_required("admin")
 def admin_applications():
     applications = Application.query.all()
-    applications_list = [
-        {
+
+    applications_list = []
+
+    for a in applications:
+        student = a.student
+        drive = a.placement_drive
+        profile = student.student_profile if student else None
+
+        applications_list.append({
             "id": a.id,
-            "student_name": a.student.name if a.student else "N/A",
-            "drive": a.placement_drive.job_title if a.placement_drive else "N/A",
-            "company_name": a.placement_drive.company.name if a.placement_drive and a.placement_drive.company else "N/A",
+            "student_name": student.name if student else "N/A",
+            "email": student.email if student else "N/A",
+
+            "company_name": drive.company.name if drive and drive.company else "N/A",
+            "drive": drive.job_title if drive else "N/A",
+
+            "package": drive.salary if drive else "N/A",
+            "apply_date": str(a.apply_date),
+
             "status": a.status or "Pending",
-            "apply_date": str(a.apply_date)
-        } for a in applications
-    ]
+            "feedback": a.feedback or "N/A",
+
+            "resume": profile.resume if profile else ""
+        })
+
     return jsonify({"applications": applications_list}), 200
+
+
+@admin_bp.route('/admin/application_detail/<int:id>', methods=['GET'])
+@auth_required('token')
+@roles_required('admin')
+def admin_application_detail(id):
+    application = Application.query.get_or_404(id)
+    student = application.student        
+    drive = application.placement_drive  
+    profile = student.student_profile if student else None
+    
+    return jsonify({
+        "email":    student.email if student else "—",
+        "package":  drive.salary if drive else "—",   
+        "feedback": application.feedback or "N/A",
+        "resume":   profile.resume if profile else "", 
+    })
 
 
 @admin_bp.route("/admin/company/approve/<int:id>", methods=["POST"])
@@ -213,7 +246,7 @@ def blacklist_company(company_id):
     if company:
         company.is_active = False
     db.session.commit()
-    return jsonify({"message": "Company blacklisted ✅"})
+    return jsonify({"message": "Company blacklisted"})
 
 
 @admin_bp.route("/admin/company/unblacklist/<int:company_id>", methods=["POST"])
@@ -228,7 +261,7 @@ def unblacklist_company(company_id):
     if company:
         company.is_active = True
     db.session.commit()
-    return jsonify({"message": "Company unblacklisted ✅"})
+    return jsonify({"message": "Company unblacklisted"})
 
 
 @admin_bp.route("/admin/student/blacklist/<int:student_id>", methods=["POST"])
@@ -243,7 +276,7 @@ def blacklist_student(student_id):
     if student:
         student.is_active = False
     db.session.commit()
-    return jsonify({"message": "Student blacklisted ✅"})
+    return jsonify({"message": "Student blacklisted"})
 
 
 @admin_bp.route("/admin/student/unblacklist/<int:student_id>", methods=["POST"])
@@ -258,7 +291,7 @@ def unblacklist_student(student_id):
     if student:
         student.is_active = True
     db.session.commit()
-    return jsonify({"message": "Student unblacklisted ✅"})
+    return jsonify({"message": "Student unblacklisted"})
 
 
 @admin_bp.route("/admin/placement_drive/approve/<int:drive_id>", methods=["POST"])
@@ -271,7 +304,7 @@ def approve_drive(drive_id):
     drive.status = "Active"    
     drive.is_approved = True
     db.session.commit()
-    return jsonify({"message": "Drive approved ✅"})
+    return jsonify({"message": "Drive approved"})
 
 
 @admin_bp.route("/admin/placement_drive/reject/<int:drive_id>", methods=["POST"])
@@ -283,4 +316,4 @@ def reject_drive(drive_id):
         return jsonify({"message": "Drive not found"}), 404
     drive.status = "Rejected"
     db.session.commit()
-    return jsonify({"message": "Drive rejected ✅"})
+    return jsonify({"message": "Drive rejected"})

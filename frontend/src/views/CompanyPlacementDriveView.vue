@@ -40,8 +40,9 @@
             <td>{{ drive.salary || '—' }}</td>
             <td>
               <span :class="
-                drive.status === 'Active'    ? 'badge-upcoming'  :
-                drive.status === 'Pending'   ? 'badge-ongoing'   :
+                drive.status === 'Active'   ? 'badge-active'   :
+                drive.status === 'Pending'  ? 'badge-pending'  :
+                drive.status === 'Rejected' ? 'badge-rejected' :
                 'badge-completed'
               ">{{ drive.status }}</span>
             </td>
@@ -72,6 +73,21 @@
         </div>
 
         <div v-else>
+
+          <div class="detail-top">
+            <div class="avatar-lg">{{ selectedDrive.job_title ? selectedDrive.job_title.charAt(0) : '?' }}</div>
+            <div>
+              <h4>{{ selectedDrive.job_title }}</h4>
+              <p>{{ selectedDrive.salary || 'Package not mentioned' }}</p>
+            </div>
+            <span :class="
+              selectedDrive.status === 'Active'   ? 'badge-active'   :
+              selectedDrive.status === 'Pending'  ? 'badge-pending'  :
+              selectedDrive.status === 'Rejected' ? 'badge-rejected' :
+              'badge-completed'
+            ">{{ selectedDrive.status }}</span>
+          </div>
+
           <div class="detail-rows">
             <div class="detail-row">
               <span class="detail-label">Role</span>
@@ -97,57 +113,9 @@
               <span class="detail-label">Description</span>
               <span class="detail-value">{{ selectedDrive.description || '—' }}</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">Status</span>
-              <span :class="
-                selectedDrive.status === 'Active'  ? 'badge-upcoming'  :
-                selectedDrive.status === 'Pending' ? 'badge-ongoing'   :
-                'badge-completed'
-              ">{{ selectedDrive.status }}</span>
-            </div>
           </div>
-
-          <div class="app-section">
-            <h4 class="app-section-title">
-              Applications
-              <span class="app-count">{{ selectedDrive.applications ? selectedDrive.applications.length : 0 }}</span>
-            </h4>
-
-            <div v-if="!selectedDrive.applications || selectedDrive.applications.length === 0" class="app-empty">
-              No applications yet
-            </div>
-
-            <div class="app-table-box" v-else>
-              <table class="app-table">
-                <thead>
-                  <tr>
-                    <th>S.No</th>
-                    <th>Student</th>
-                    <th>Apply Date</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(app, index) in selectedDrive.applications" :key="app.id">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ app.student_name }}</td>
-                    <td>{{ app.apply_date }}</td>
-                    <td>
-                      <span :class="[
-                        'status-badge',
-                        app.status === 'Pending'     ? 'status-pending'  :
-                        app.status === 'Selected'    ? 'status-selected' :
-                        app.status === 'Shortlisted' ? 'status-selected' :
-                        'status-rejected'
-                      ]">{{ app.status }}</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+          
         </div>
-
       </div>
     </div>
 
@@ -162,8 +130,8 @@ export default {
 
   data() {
     return {
-      loading:      true,
-      modalLoading: false,
+      loading:       true,
+      modalLoading:  false,
       search:        "",
       selectedDrive: null,
       drives:        [],
@@ -218,6 +186,7 @@ export default {
         this.modalLoading = false
       }
     }
+
   }
 }
 </script>
@@ -234,29 +203,29 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 27px;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 18px;
 }
 
 .topbar h1 {
-  font-size: 34px;
+  font-size: 30.5px;
   color: #111827;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .topbar p {
   color: #6b7280;
-  font-size: 15px;
+  font-size: 13.5px;
 }
 
 .search-input {
-  padding: 11px 14px;
+  padding: 10px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   color: #111827;
-  width: 280px;
+  width: 255px;
   outline: none;
   transition: 0.2s;
   background: white;
@@ -283,17 +252,17 @@ thead {
 }
 
 th {
-  padding: 16px 20px;
+  padding: 14px 18px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
 }
 
 td {
-  padding: 16px 20px;
-  font-size: 15px;
+  padding: 14px 18px;
+  font-size: 14px;
   color: #111827;
   border-bottom: 1px solid #f3f4f6;
   font-weight: 600;
@@ -309,7 +278,7 @@ tr:hover td {
 
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 9px;
   align-items: center;
 }
 
@@ -317,9 +286,9 @@ tr:hover td {
   background: #eff6ff;
   color: #2563eb;
   border: none;
-  padding: 8px 14px;
+  padding: 7px 13px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -329,35 +298,47 @@ tr:hover td {
   background: #dbeafe;
 }
 
-.badge-upcoming,
-.badge-ongoing,
-.badge-completed {
-  padding: 5px 12px;
+.badge-active {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 4px 11px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
 }
 
-.badge-upcoming {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.badge-ongoing {
+.badge-pending {
   background: #fef9c3;
   color: #ca8a04;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-rejected {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .badge-completed {
-  background: #dcfce7;
-  color: #16a34a;
+  background: #f3f4f6;
+  color: #6b7280;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 15px;
-  padding: 40px 0;
+  font-size: 14px;
+  padding: 36px 0;
 }
 
 .modal-overlay {
@@ -372,29 +353,29 @@ tr:hover td {
 
 .modal {
   background: white;
-  border-radius: 18px;
-  width: 620px;
+  border-radius: 16px;
+  width: 558px;
   max-width: 90%;
   max-height: 85vh;
   overflow-y: auto;
-  padding: 28px;
+  padding: 25px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f3f4f6;
   position: sticky;
   top: 0;
   background: white;
   z-index: 1;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f3f4f6;
 }
 
 .modal-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
@@ -402,27 +383,63 @@ tr:hover td {
 .btn-close {
   background: #f3f4f6;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   color: #374151;
+}
+
+.detail-top {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.avatar-lg {
+  width: 47px;
+  height: 47px;
+  border-radius: 50%;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.detail-top h4 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+  flex: 1;
+}
+
+.detail-top p {
+  font-size: 12px;
+  color: #6b7280;
 }
 
 .detail-rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 28px;
+  gap: 9px;
+  margin-bottom: 25px;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
-  padding-bottom: 10px;
+  font-size: 13px;
+  padding-bottom: 9px;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -443,33 +460,33 @@ tr:hover td {
 }
 
 .app-section-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 14px;
+  margin-bottom: 13px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .app-count {
   background: #eff6ff;
   color: #2563eb;
-  padding: 2px 10px;
-  border-radius: 20px;
-  font-size: 13px;
+  padding: 2px 9px;
+  border-radius: 18px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .app-empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 14px;
-  padding: 20px 0;
+  font-size: 13px;
+  padding: 18px 0;
 }
 
 .app-table-box {
-  border-radius: 12px;
+  border-radius: 11px;
   border: 1px solid #e5e7eb;
   overflow: hidden;
 }
@@ -484,17 +501,17 @@ tr:hover td {
 }
 
 .app-table th {
-  padding: 12px 16px;
+  padding: 11px 14px;
   text-align: left;
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
 }
 
 .app-table td {
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 11px 14px;
+  font-size: 13px;
   color: #111827;
   border-bottom: 1px solid #f3f4f6;
   font-weight: 500;
@@ -508,20 +525,28 @@ tr:hover td {
   background: #f9fafb;
 }
 
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
+.status-upcoming,
+.status-ongoing,
+.status-completed,
+.status-rejected {
+  padding: 4px 9px;
+  border-radius: 18px;
+  font-size: 11px;
   font-weight: 600;
   white-space: nowrap;
 }
 
-.status-pending {
+.status-upcoming {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-ongoing {
   background: #fef9c3;
   color: #ca8a04;
 }
 
-.status-selected {
+.status-completed {
   background: #dcfce7;
   color: #16a34a;
 }

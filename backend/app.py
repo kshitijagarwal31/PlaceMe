@@ -18,7 +18,7 @@ def create_app():
     app.config.from_object(LocalDevelopmentConfig)
 
     db.init_app(app)
-    CORS(app)
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)

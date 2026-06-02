@@ -14,8 +14,6 @@ def company_dashboard_data():
 
     all_drives     = PlacementDrive.query.filter_by(company_id=current_user.id).all()
     active_drives  = [d for d in all_drives if d.status == "Active"]
-    closed_drives  = [d for d in all_drives if d.status == "Closed"]
-    pending_drives = [d for d in all_drives if d.status == "Pending"]
 
     drive_ids    = [d.id for d in all_drives]
     applications = Application.query.filter(
@@ -49,7 +47,8 @@ def company_dashboard_data():
                 "status":       a.status,
                 "apply_date":   str(a.apply_date)
             } for a in applications
-        ]
+        ], 
+        "company_name":       current_user.name
     }), 200
     
     
@@ -99,7 +98,7 @@ def complete_company_profile():
         company.website_link      = data.get("website_link",      company.website_link)
 
     db.session.commit()
-    return jsonify({"message": "Company profile saved successfully ✅"}), 200
+    return jsonify({"message": "Company profile saved successfully"}), 200
     
     
 @company_bp.route("/company/create_drive", methods=["POST"])
@@ -109,7 +108,7 @@ def create_drive():
     
     company = CompanyProfile.query.filter_by(user_id=current_user.id).first()
     if not company or not company.industry or not company.address or not company.hr_contact_number or not company.website_link:
-        return jsonify({"message": "Please complete your profile before creating a drive ❌"}), 403
+        return jsonify({"message": "Please complete your profile before creating a drive"}), 403
 
     data = request.get_json()
 
@@ -126,7 +125,7 @@ def create_drive():
     db.session.add(drive)
     db.session.commit()
 
-    return jsonify({"message": "Drive created successfully ✅"}), 201
+    return jsonify({"message": "Drive created successfully"}), 201
 
 @company_bp.route("/company/my_drives", methods=["GET"])
 @auth_required("token")
@@ -235,5 +234,5 @@ def company_application_update(app_id):
     application.feedback = data.get("feedback", application.feedback) 
     db.session.commit()
 
-    return jsonify({"message": f"Application {application.status} successfully ✅"}), 200
+    return jsonify({"message": f"Application {application.status} successfully"}), 200
 

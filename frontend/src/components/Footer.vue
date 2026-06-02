@@ -25,11 +25,13 @@ export default {
 .footer{
   width:100%;
   text-align:center;
-  padding:24px;
+  padding:12px 16px;
   border-top:1px solid #e5e7eb;
   color:#6b7280;
   background:white;
-  font-size:15px;
+  font-size:12px;
+  font-weight:500;
+  line-height:1.5;
 }
 
 </style>

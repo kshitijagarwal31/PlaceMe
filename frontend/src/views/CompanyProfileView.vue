@@ -217,31 +217,37 @@ export default {
 <style scoped>
 
 .topbar {
-  margin-bottom: 34px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 27px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .topbar h1 {
-  font-size: 34px;
+  font-size: 30.5px;
   color: #111827;
-  margin-bottom: 5px;
+  font-weight: 700;
 }
 
 .topbar p {
+  font-size: 13.5px;
   color: #6b7280;
-  font-size: 15px;
+  margin-top: 4px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1.8fr;
-  gap: 24px;
+  gap: 18px;
 }
 
 .section-box {
   background: white;
   border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 34px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  padding: 25px;
 }
 
 .preview-top {
@@ -249,55 +255,55 @@ export default {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 28px;
+  padding-bottom: 22px;
   border-bottom: 1px solid #f3f4f6;
-  margin-bottom: 28px;
+  margin-bottom: 22px;
 }
 
 .preview-avatar {
-  width: 82px;
-  height: 82px;
+  width: 66px;
+  height: 66px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 34px;
+  font-size: 27px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .preview-top h2 {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: #111827;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
 }
 
 .preview-top p {
-  font-size: 15px;
+  font-size: 13px;
   color: #6b7280;
 }
 
 .profile-details {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-bottom: 28px;
+  gap: 10px;
+  margin-bottom: 22px;
 }
 
 .detail-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 15px;
-  padding-bottom: 12px;
+  font-size: 13px;
+  padding-bottom: 9px;
   border-bottom: 1px solid #f3f4f6;
 }
 
-.detail-label { 
-  color: #6b7280; 
+.detail-label {
+  color: #6b7280;
 }
 
 .detail-value {
@@ -311,63 +317,62 @@ export default {
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 5px 14px;
-  border-radius: 20px;
+  padding: 4px 12px;
+  border-radius: 16px;
 }
 
 .info-box {
   background: #eff6ff;
   border-radius: 10px;
-  padding: 16px;
-  font-size: 14px;
+  padding: 13px;
+  font-size: 12.5px;
   color: #2563eb;
   line-height: 1.6;
 }
 
 .form-title {
-  font-size: 20px;
+  font-size: 16.5px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
 }
 
-.form-group { 
-  margin-bottom: 20px; 
+.form-group {
+  margin-bottom: 14px;
 }
 
 .form-group label {
   display: block;
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
-.required { 
-  color: #dc2626; 
+.required {
+  color: #dc2626;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 12px 16px;
+  padding: 9px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  font-size: 15px;
-  color: #111827;
+  font-size: 13px;
   outline: none;
   transition: 0.2s;
-  box-sizing: border-box;
-  background: white;
   font-family: inherit;
+  background: white;
+  box-sizing: border-box;
 }
 
 .form-group input:focus,
@@ -375,45 +380,35 @@ export default {
   border-color: #2563eb;
 }
 
-.form-group input:disabled {
-  background: #f9fafb;
-  color: #6b7280;
-  cursor: not-allowed;
-}
-
-.form-bottom { 
-  margin-top: 6px; 
-}
-
 .btn-save {
   width: 100%;
-  padding: 14px;
+  padding: 11px;
   background: #2563eb;
   color: white;
   border: none;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
 
-.btn-save:hover { 
-  background: #1d4ed8; 
+.btn-save:hover {
+  background: #1d4ed8;
 }
 
 .save-msg {
   color: #16a34a;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 9px;
 }
 
 .error-msg {
   color: #dc2626;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 9px;
 }
 
 .empty {

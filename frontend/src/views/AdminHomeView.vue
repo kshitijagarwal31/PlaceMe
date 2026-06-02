@@ -2,7 +2,10 @@
   <div>
 
     <div class="topbar">
-      <h1>Admin Dashboard</h1>
+      <div>
+        <h1>Welcome, {{ adminName }}! </h1>
+        <p>Here's your placement overview</p>
+      </div>
     </div>
 
     <div v-if="loading" class="empty" style="padding: 60px 0;">
@@ -120,6 +123,7 @@ export default {
 
   data() {
     return {
+      adminName: "",
       loading: true,
       stats: {
         total_students:     0,
@@ -143,7 +147,7 @@ export default {
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"), // ✅ "token" fixed
+          "Authentication-Token": localStorage.getItem("token"), 
         },
       };
     },
@@ -151,11 +155,12 @@ export default {
     async fetchDashboardData() {
       this.loading = true;
       try {
-        const res = await axios.get("http://localhost:5000/admin/dashboard_data", this.getHeaders()); // ✅ full URL fixed
+        const res = await axios.get("http://localhost:5000/admin/dashboard_data", this.getHeaders()); 
         console.log("Full response:", res.data);
         this.stats            = res.data.stats             || this.stats;
         this.pendingCompanies = res.data.pending_companies || [];
         this.pendingDrives    = res.data.pending_drives    || [];
+        this.adminName        = res.data.admin_name        || [];
       } catch (err) {
         console.error("Error:", err.response);
       } finally {
@@ -210,145 +215,170 @@ export default {
 </script>
 
 <style scoped>
+
 .topbar {
-  margin-bottom: 30px;
+  margin-bottom: 27px;
 }
+
 .topbar h1 {
-  font-size: 34px;
+  font-size: 31px;
   color: #111827;
 }
+
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(162px, 1fr));
+  gap: 18px;
+  margin-bottom: 27px;
 }
+
 .card {
   background: white;
-  padding: 24px;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
 }
+
 .card h2 {
-  font-size: 30px;
+  font-size: 27px;
   color: #2563eb;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
   font-weight: 700;
 }
+
 .card p {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 13px;
 }
+
 .requests-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 18px;
 }
+
 .section-box {
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
+  padding: 22px;
 }
+
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
+
 .section-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
+
 .pending-count {
   background: #fef9c3;
   color: #ca8a04;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 4px 11px;
+  border-radius: 18px;
 }
+
 .request-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
+  padding: 13px 0;
   border-bottom: 1px solid #f3f4f6;
 }
+
 .request-item:last-of-type {
   border-bottom: none;
 }
+
 .request-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
 }
+
 .avatar {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   flex-shrink: 0;
 }
+
 .request-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #111827;
 }
+
 .request-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
   margin-top: 2px;
 }
+
 .request-actions {
   display: flex;
-  gap: 8px;
+  gap: 7px;
 }
+
 .btn-approve {
   background: #dcfce7;
   color: #16a34a;
   border: none;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 6px 13px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
+
 .btn-approve:hover {
   background: #bbf7d0;
 }
+
 .btn-reject {
   background: #fee2e2;
   color: #dc2626;
   border: none;
-  padding: 7px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 6px 13px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
 }
+
 .btn-reject:hover {
   background: #fecaca;
 }
+
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 14px;
-  padding: 30px 0;
+  font-size: 13px;
+  padding: 27px 0;
 }
+
 .view-all {
   text-align: center;
   color: #9ca3af;
-  font-size: 13px;
-  margin-top: 14px;
+  font-size: 12px;
+  margin-top: 13px;
 }
+
 </style>

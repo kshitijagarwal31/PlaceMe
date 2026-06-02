@@ -143,6 +143,7 @@ export default {
 </script>
 
 <style scoped>
+
 * {
   margin: 0;
   padding: 0;
@@ -153,7 +154,7 @@ export default {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .register-page {
@@ -161,77 +162,83 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 60px 20px;
+  padding: 30px 20px;
   background: #f5f7fb;
 }
 
 .register-card {
   width: 100%;
-  max-width: 500px;
-  background: #fff;
-  padding: 48px;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  max-width: 420px;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
 .top-section {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 22px;
 }
 
 .top-section h2 {
-  font-size: 36px;
-  margin-bottom: 8px;
+  font-size: 28px;
+  color: #111827;
+  margin-bottom: 6px;
+  font-weight: 700;
 }
 
 .top-section p {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .error-box {
   background: #fef2f2;
   color: #dc2626;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 8px;
-  margin-bottom: 15px;
-  font-size: 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
 }
 
 .success-box {
   background: #f0fdf4;
   color: #16a34a;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 8px;
-  margin-bottom: 15px;
-  font-size: 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .input-group {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
 }
 
 .input-group label {
   display: block;
   margin-bottom: 6px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
+  color: #374151;
 }
 
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   outline: none;
-  font-size: 15px;
+  font-size: 13px;
+  transition: 0.2s;
+  background: white;
 }
 
 .input-group input:focus,
 .input-group select:focus {
   border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 
 .password-box {
@@ -240,42 +247,49 @@ export default {
 
 .show-btn {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   border: none;
   background: none;
   color: #2563eb;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .btn {
   width: 100%;
-  padding: 14px;
+  padding: 12px;
   background: #2563eb;
   color: white;
   border: none;
   border-radius: 8px;
-  font-weight: bold;
-  font-size: 15px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn:hover {
   background: #1d4ed8;
 }
 
+.btn:disabled {
+  opacity: 0.7;
+}
+
 .bottom-text {
   text-align: center;
   margin-top: 18px;
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
 }
 
 .bottom-text a {
   color: #2563eb;
-  font-weight: bold;
   text-decoration: none;
+  font-weight: 700;
 }
 
 </style>

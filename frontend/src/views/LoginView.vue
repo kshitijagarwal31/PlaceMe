@@ -108,7 +108,9 @@ export default {
         }
 
       } catch (err) {
-        this.errorMessage = err.response.data.message
+          this.errorMessage =
+            err.response?.data?.message ||
+            "Something went wrong!"
       } finally {
         this.loading = false
       }
@@ -119,6 +121,7 @@ export default {
 </script>
 
 <style scoped>
+
 * {
   margin: 0;
   padding: 0;
@@ -136,69 +139,71 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 60px 20px;
+  padding: 30px 20px;
   background: #f5f7fb;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 .login-card {
   width: 100%;
-  max-width: 500px;  
+  max-width: 420px;
   background: white;
-  padding: 48px;  
-  border-radius: 22px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
 }
 
 .top-section {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 22px;
 }
 
 .top-section h2 {
-  font-size: 38px; 
+  font-size: 28px;
   color: #111827;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
+  font-weight: 700;
 }
 
 .top-section p {
   color: #6b7280;
-  font-size: 15px;
+  font-size: 13px;
 }
 
 .error-box {
   background: #fef2f2;
   color: #dc2626;
-  padding: 12px;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
 }
 
 .input-group {
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .input-group label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
+  margin-bottom: 6px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
 }
 
 .input-group input {
   width: 100%;
-  padding: 15px;   
+  padding: 12px;
   border: 1px solid #d1d5db;
-  border-radius: 10px;
+  border-radius: 8px;
   outline: none;
-  font-size: 15px;  
+  font-size: 13px;
+  transition: 0.2s;
 }
 
 .input-group input:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 
 .password-box {
@@ -214,19 +219,21 @@ export default {
   background: none;
   color: #2563eb;
   cursor: pointer;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .login-btn {
   width: 100%;
-  padding: 15px;   
+  padding: 12px;
   background: #2563eb;
   color: white;
   border: none;
-  border-radius: 10px;
-  font-size: 17px;  
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 700;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .login-btn:hover {
@@ -239,8 +246,9 @@ export default {
 
 .register-text {
   text-align: center;
-  margin-top: 25px;
+  margin-top: 18px;
   color: #6b7280;
+  font-size: 13px;
 }
 
 .register-text a {

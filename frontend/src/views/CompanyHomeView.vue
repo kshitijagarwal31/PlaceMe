@@ -2,7 +2,10 @@
   <div>
 
     <div class="topbar">
-      <h1>Company Dashboard</h1>
+      <div>
+        <h1>Welcome, {{ companyName }}! </h1>
+        <p>Here's your placement overview</p>
+      </div>
     </div>
 
     <div v-if="!checkingProfile && !isProfileComplete" class="profile-banner">
@@ -68,6 +71,7 @@
             app.status === 'Selected'    ? 'badge-selected' :
             app.status === 'Pending'     ? 'badge-pending'  :
             app.status === 'Shortlisted' ? 'badge-active'   :
+            app.status === 'Interview Scheduled'  ? 'badge-interview' :
             'badge-rejected'
           ">{{ app.status }}</span>
         </div>
@@ -117,6 +121,7 @@ export default {
 
   data() {
     return {
+      companyName: "",
       isProfileComplete: false,
       checkingProfile:   true,
       loadingStats:      true,
@@ -172,6 +177,7 @@ export default {
         this.stats        = data.stats
         this.applications = data.applications
         this.drives       = data.placement_drives
+        this.companyName  = data.company_name || ""
       } catch (err) {
         console.error("Dashboard data load failed:", err)
       } finally {
@@ -196,39 +202,38 @@ export default {
   background: #fefce8;
   border: 1px solid #fde047;
   border-radius: 14px;
-  padding: 18px 24px;
-  margin-bottom: 24px;
+  padding: 15px 19px;
+  margin-bottom: 22px;
 }
 
 .banner-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .banner-icon {
-  font-size: 24px;
+  font-size: 21px;
 }
 
 .banner-title {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   color: #854d0e;
 }
 
 .banner-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: #a16207;
-  margin-top: 2px;
 }
 
 .btn-complete {
   background: #ca8a04;
   color: white;
   border: none;
-  padding: 10px 20px;
+  padding: 9px 18px;
   border-radius: 10px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
@@ -239,59 +244,65 @@ export default {
 }
 
 .topbar {
-  margin-bottom: 30px;
+  margin-bottom: 26px;
 }
 
 .topbar h1 {
-  font-size: 34px;
+  font-size: 30px;
   color: #111827;
+}
+
+.topbar p {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
 }
 
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
-  margin-bottom: 30px;
+  gap: 18px;
+  margin-bottom: 26px;
 }
 
 .card {
   background: white;
-  padding: 24px;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .card h2 {
-  font-size: 30px;
+  font-size: 27px;
   color: #2563eb;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-weight: 700;
 }
 
 .card p {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .requests-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 18px;
 }
 
 .section-box {
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: 20px;
 }
 
 .section-header {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .section-header h3 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
 }
@@ -300,100 +311,90 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
+  padding: 12px 0;
   border-bottom: 1px solid #f3f4f6;
-}
-
-.request-item:last-of-type {
-  border-bottom: none;
 }
 
 .request-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 11px;
 }
 
 .avatar {
-  width: 38px;
-  height: 38px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .request-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #111827;
 }
 
 .request-sub {
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
   margin-top: 2px;
 }
 
-.badge-selected {
-  background: #dcfce7;
-  color: #16a34a;
-  font-size: 12px;
+.badge-selected,
+.badge-pending,
+.badge-rejected,
+.badge-active,
+.badge-completed,
+.badge-interview {
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
+  padding: 3px 10px;
+  border-radius: 16px;
   white-space: nowrap;
+}
+
+.badge-selected {
+  background: #dbeafe;
+  color: #2563eb;
 }
 
 .badge-pending {
   background: #fef9c3;
   color: #ca8a04;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  white-space: nowrap;
 }
 
 .badge-rejected {
   background: #fee2e2;
   color: #dc2626;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  white-space: nowrap;
 }
 
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  white-space: nowrap;
 }
 
 .badge-completed {
   background: #f3f4f6;
   color: #6b7280;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  white-space: nowrap;
+}
+
+.badge-interview { 
+  background: #f3e8ff; 
+  color: #7c3aed; 
 }
 
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 14px;
-  padding: 30px 0;
+  font-size: 13px;
+  padding: 26px 0;
 }
+
 </style>

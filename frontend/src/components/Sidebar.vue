@@ -82,13 +82,14 @@
           💼 Create Drive
         </router-link>
 
+        <router-link to="/company_dashboard/placement_drives" class="menu-item">
+          📅 My Placement Drives
+        </router-link>
+
         <router-link to="/company_dashboard/applications" class="menu-item">
           👨‍🎓 Applications
         </router-link>
 
-        <router-link to="/company_dashboard/placement_drives" class="menu-item">
-          📅 My Placement Drives
-        </router-link>
 
       </div>
 
@@ -162,10 +163,10 @@ export default {
 }
 
 .sidebar {
-  width: 280px;
+  width: 250px;
   min-height: 100vh;
   background: linear-gradient(180deg, #2563eb, #1d4ed8);
-  padding: 25px 18px;
+  padding: 20px 14px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -175,29 +176,30 @@ export default {
 .top-section {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 40px;
+  gap: 10px;
+  margin-bottom: 30px;
 }
 
 .logo-box {
-  width: 55px;
-  height: 55px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.15);
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.15);
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
+  font-size: 22px;
 }
 
 .logo-content h2 {
   color: white;
-  font-size: 24px;
+  font-size: 19px;
+  line-height: 1.1;
 }
 
 .logo-content p {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 13px;
+  color: rgba(255,255,255,0.8);
+  font-size: 11px;
   margin-top: 2px;
 }
 
@@ -211,81 +213,75 @@ export default {
   align-items: center;
   text-decoration: none;
   color: white;
-  padding: 15px 18px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  font-size: 15px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
   font-weight: 600;
   transition: 0.2s;
 }
 
 .menu-item:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.12);
 }
 
 .menu-item.router-link-exact-active {
-  background: rgba(255, 255, 255, 0.25);
-  border-left: 4px solid white;
+  background: rgba(255,255,255,0.22);
+  border-left: 3px solid white;
 }
 
 .bottom-section {
-  margin-top: 40px;
+  margin-top: 24px;
 }
 
 .profile-box {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: rgba(255, 255, 255, 0.12);
-  padding: 14px;
-  border-radius: 14px;
+  gap: 10px;
+  background: rgba(255,255,255,0.12);
+  padding: 12px;
+  border-radius: 10px;
 }
 
 .profile-icon {
-  width: 45px;
-  height: 45px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: white;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .profile-box h4 {
   color: white;
   text-transform: capitalize;
-  margin-bottom: 3px;
+  font-size: 14px;
+  margin-bottom: 2px;
 }
 
 .profile-box p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  font-size: 11px;
 }
 
 .logout-btn {
   width: 100%;
-  margin-top: 18px;
-  padding: 14px;
+  margin-top: 14px;
+  padding: 11px;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   background: white;
   color: #2563eb;
-  font-size: 15px;
-  font-weight: bold;
+  font-size: 13px;
+  font-weight: 700;
   cursor: pointer;
   transition: 0.2s;
 }
 
 .logout-btn:hover {
   background: #dbeafe;
-}
-
-@media(max-width: 900px) {
-  .sidebar {
-    width: 100%;
-    min-height: auto;
-  }
 }
 
 </style>

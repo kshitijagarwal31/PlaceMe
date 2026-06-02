@@ -48,6 +48,7 @@ def student_dashboard_data():
     ]
 
     return jsonify({
+        "student_name": current_user.name,
         "stats"            : stats,
         "profile_complete" : profile_complete, 
         "placement_drives" : drives_list,
@@ -113,7 +114,7 @@ def apply_drive(drive_id):
     profile = StudentProfile.query.filter_by(user_id=current_user.id).first()
 
     if not profile or not profile.cgpa or not profile.skills or not profile.resume or not profile.bio:
-        return jsonify({"message": "Please complete your profile before applying for a drive ❌"}), 403
+        return jsonify({"message": "Please complete your profile before applying for a drive"}), 403
 
     drive = PlacementDrive.query.get(drive_id)
 

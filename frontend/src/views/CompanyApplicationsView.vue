@@ -37,13 +37,9 @@
             <td>{{ application.drive_title }}</td>
             <td>{{ application.apply_date }}</td>
             <td>
-              <span :class="[
-                'status-badge',
-                application.status === 'Pending'     ? 'status-pending'     :
-                application.status === 'Shortlisted' ? 'status-shortlisted' :
-                application.status === 'Rejected'    ? 'status-rejected'    :
-                'status-selected'
-              ]">{{ application.status }}</span>
+              <span :class="['status-badge', statusClass(application.status)]">
+                {{ application.status }}
+              </span>
             </td>
             <td>
               <div class="actions">
@@ -53,7 +49,6 @@
           </tr>
         </tbody>
       </table>
-
       <div v-if="filteredApplications.length === 0" class="empty">
         No applications found
       </div>
@@ -72,19 +67,16 @@
         </div>
 
         <div v-else>
+
           <div class="detail-top">
             <div class="avatar-lg">{{ selectedApp.student_name ? selectedApp.student_name.charAt(0) : '?' }}</div>
-            <div>
+            <div style="flex:1">
               <h4>{{ selectedApp.student_name }}</h4>
               <p>CGPA {{ selectedApp.cgpa }}</p>
             </div>
-            <span :class="[
-              'status-badge',
-              selectedApp.status === 'Pending'     ? 'status-pending'     :
-              selectedApp.status === 'Shortlisted' ? 'status-shortlisted' :
-              selectedApp.status === 'Rejected'    ? 'status-rejected'    :
-              'status-selected'
-            ]">{{ selectedApp.status }}</span>
+            <span :class="['status-badge', statusClass(selectedApp.status)]">
+              {{ selectedApp.status }}
+            </span>
           </div>
 
           <div class="detail-rows">
@@ -113,6 +105,48 @@
               <a v-if="selectedApp.resume" :href="selectedApp.resume" target="_blank" class="resume-link">📄 View Resume</a>
               <span v-else class="detail-value">—</span>
             </div>
+        
+            <template v-if="selectedApp.interview_date">
+              <div class="detail-row">
+                <span class="detail-label">Interview Date</span>
+                <span class="detail-value">{{ selectedApp.interview_date }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Interview Time</span>
+                <span class="detail-value">{{ selectedApp.interview_time }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">Interview Location</span>
+                <span class="detail-value">{{ selectedApp.interview_location }}</span>
+              </div>
+            </template>
+          </div>
+
+          <div v-if="selectedApp.status === 'Shortlisted'" class="schedule-section">
+            <div class="schedule-title">📅 Schedule Interview</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Date <span class="required">*</span></label>
+                <input v-model="interview.date" type="date" class="form-input" :min="todayDate" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time <span class="required">*</span></label>
+                <input v-model="interview.time" type="time" class="form-input" />
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 12px;">
+              <label class="form-label">Location / Meeting Link <span class="required">*</span></label>
+              <input
+                v-model="interview.location"
+                type="text"
+                class="form-input"
+                placeholder="e.g. Room 301  or  https://meet.google.com/xyz"
+              />
+            </div>
+
+            <div v-if="scheduleError" class="error-msg">⚠️ {{ scheduleError }}</div>
           </div>
 
           <div class="feedback-section">
@@ -124,20 +158,29 @@
               rows="3"
             ></textarea>
           </div>
-
-          <div class="modal-actions">
-            <button class="btn-shortlist" @click="updateStatus('Shortlisted')">
-              ✓ Shortlist
-            </button>
-            <button class="btn-reject" @click="updateStatus('Rejected')">
-              ✕ Reject
-            </button>
-            <button class="btn-feedback" @click="saveFeedback">
-              💬 Save Feedback
-            </button>
+        
+          <div v-if="selectedApp.status === 'Pending'" class="modal-actions">
+            <button class="btn-shortlist" @click="updateStatus('Shortlisted')">Shortlist</button>
+            <button class="btn-reject"    @click="updateStatus('Rejected')">Reject</button>
           </div>
-        </div>
 
+          <div v-else-if="selectedApp.status === 'Shortlisted'" class="modal-actions">
+            <button class="btn-schedule" @click="confirmSchedule" :disabled="scheduleLoading">
+              {{ scheduleLoading ? 'Scheduling...' : 'Confirm Schedule' }}
+            </button>
+            <button class="btn-reject"   @click="updateStatus('Rejected')">Reject</button>
+          </div>
+
+          <div v-else-if="selectedApp.status === 'Interview Scheduled'" class="modal-actions">
+            <button class="btn-select"   @click="updateStatus('Selected')">Selected</button>
+            <button class="btn-reject"   @click="updateStatus('Rejected')">Reject</button>
+          </div>
+
+          <div v-else class="modal-actions">
+            <button class="btn-feedback" @click="saveFeedback" style="flex:1">💬 Save Feedback</button>
+          </div>
+
+        </div>
       </div>
     </div>
 
@@ -152,12 +195,19 @@ export default {
 
   data() {
     return {
-      loading:      true,
-      modalLoading: false,
-      search:       "",
-      selectedApp:  null,
-      feedback:     "",
-      applications: [],
+      loading:         true,
+      modalLoading:    false,
+      scheduleLoading: false,
+      scheduleError:   "",
+      search:          "",
+      selectedApp:     null,
+      feedback:        "",
+      applications:    [],
+      interview: {
+        date:     "",
+        time:     "",
+        location: "",
+      },
     }
   },
 
@@ -173,16 +223,28 @@ export default {
         a.drive_title.toLowerCase().includes(q)  ||
         a.status.toLowerCase().includes(q)
       )
+    },
+    todayDate() {
+      return new Date().toISOString().split("T")[0]
     }
   },
 
   methods: {
 
+    statusClass(status) {
+      const map = {
+        "Pending":             "status-pending",
+        "Shortlisted":         "status-shortlisted",
+        "Rejected":            "status-rejected",
+        "Selected":            "status-selected",
+        "Interview Scheduled": "status-interview",
+      }
+      return map[status] || "status-pending"
+    },
+
     getHeaders() {
       return {
-        headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+        headers: { "Authentication-Token": localStorage.getItem("token") },
       }
     },
 
@@ -199,9 +261,11 @@ export default {
     },
 
     async viewDetail(app) {
-      this.selectedApp  = app
-      this.modalLoading = true
-      this.feedback     = ""
+      this.selectedApp     = app
+      this.modalLoading    = true
+      this.feedback        = ""
+      this.scheduleError   = ""
+      this.interview       = { date: "", time: "", location: "" }
       try {
         const res = await axios.get(`http://localhost:5000/company/application_detail/${app.id}`, this.getHeaders())
         this.selectedApp = res.data
@@ -217,7 +281,7 @@ export default {
       try {
         await axios.patch(
           `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
-          { status: status, feedback: this.feedback },
+          { status, feedback: this.feedback },
           this.getHeaders()
         )
         const app = this.applications.find(a => a.id === this.selectedApp.id)
@@ -235,15 +299,48 @@ export default {
           { status: this.selectedApp.status, feedback: this.feedback },
           this.getHeaders()
         )
-        alert("Feedback saved successfully! ✅")
+        alert("Feedback saved! ✅")
       } catch (err) {
         console.error("Feedback save failed:", err)
       }
     },
 
+    async confirmSchedule() {
+      if (!this.interview.date || !this.interview.time || !this.interview.location) {
+        this.scheduleError = "Please fill Date, Time and Location."
+        return
+      }
+      this.scheduleLoading = true
+      this.scheduleError   = ""
+      try {
+        await axios.patch(
+          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
+          {
+            status:             "Interview Scheduled",
+            feedback:           this.feedback,
+            interview_date:     this.interview.date,
+            interview_time:     this.interview.time,
+            interview_location: this.interview.location,
+          },
+          this.getHeaders()
+        )
+        const app = this.applications.find(a => a.id === this.selectedApp.id)
+        if (app) app.status = "Interview Scheduled"
+        this.closeModal()
+        alert("Interview scheduled! 📅✅")
+      } catch (err) {
+        this.scheduleError = "Failed to schedule. Please try again."
+        console.error("Schedule failed:", err)
+      } finally {
+        this.scheduleLoading = false
+      }
+    },
+
     closeModal() {
-      this.selectedApp = null
-      this.feedback    = ""
+      this.selectedApp   = null
+      this.feedback      = ""
+      this.scheduleError = ""
+      this.interview     = { date: "", time: "", location: "" }
     }
   }
 }
@@ -265,29 +362,28 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 27px;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 18px;
 }
 
 .topbar h1 {
-  font-size: 34px;
+  font-size: 30.5px;
   color: #111827;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .topbar p {
   color: #6b7280;
-  font-size: 15px;
+  font-size: 13.5px;
 }
 
 .search-input {
-  padding: 11px 14px;
+  padding: 10px 13px;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 14px;
-  color: #111827;
-  width: 280px;
+  border-radius: 9px;
+  font-size: 13px;
+  width: 255px;
   outline: none;
   transition: 0.2s;
   background: white;
@@ -299,7 +395,7 @@ export default {
 
 .table-box {
   background: white;
-  border-radius: 18px;
+  border-radius: 17px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
@@ -314,17 +410,17 @@ thead {
 }
 
 th {
-  padding: 16px 20px;
+  padding: 14px 18px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
   color: #6b7280;
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
 }
 
 td {
-  padding: 16px 20px;
-  font-size: 15px;
+  padding: 14px 18px;
+  font-size: 14px;
   color: #111827;
   border-bottom: 1px solid #f3f4f6;
   font-weight: 600;
@@ -340,7 +436,7 @@ tr:hover td {
 
 .actions {
   display: flex;
-  gap: 10px;
+  gap: 9px;
   align-items: center;
 }
 
@@ -348,9 +444,9 @@ tr:hover td {
   background: #eff6ff;
   color: #2563eb;
   border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 13px;
+  padding: 7px 13px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -361,9 +457,9 @@ tr:hover td {
 }
 
 .status-badge {
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 18px;
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -374,8 +470,8 @@ tr:hover td {
 }
 
 .status-shortlisted {
-  background: #dbeafe;
-  color: #2563eb;
+  background: #dcfce7;
+  color: #16a34a;
 }
 
 .status-rejected {
@@ -384,21 +480,26 @@ tr:hover td {
 }
 
 .status-selected {
-  background: #dcfce7;
-  color: #16a34a;
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-interview {
+  background: #f3e8ff;
+  color: #7c3aed;
 }
 
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 15px;
-  padding: 40px 0;
+  font-size: 14px;
+  padding: 36px 0;
 }
 
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -407,40 +508,40 @@ tr:hover td {
 
 .modal {
   background: white;
-  border-radius: 18px;
-  width: 580px;
-  max-width: 90%;
-  max-height: 85vh;
+  border-radius: 16px;
+  width: 558px;
+  max-width: 92%;
+  max-height: 88vh;
   overflow-y: auto;
-  padding: 28px;
+  padding: 25px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f3f4f6;
   position: sticky;
   top: 0;
   background: white;
   z-index: 1;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f3f4f6;
 }
 
 .modal-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #111827;
 }
 
 .btn-close {
-  background: #f3f4f6;
-  border: none;
-  width: 32px;
-  height: 32px;
+  width: 29px;
+  height: 29px;
   border-radius: 50%;
-  font-size: 14px;
+  border: none;
+  background: #f3f4f6;
+  font-size: 13px;
   cursor: pointer;
   color: #374151;
 }
@@ -448,43 +549,42 @@ tr:hover td {
 .detail-top {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  gap: 13px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .avatar-lg {
-  width: 52px;
-  height: 52px;
+  width: 47px;
+  height: 47px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .detail-top h4 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 4px;
-  flex: 1;
+  margin-bottom: 3px;
 }
 
 .detail-top p {
-  font-size: 13px;
+  font-size: 12px;
   color: #6b7280;
 }
 
 .detail-rows {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
   margin-bottom: 20px;
 }
 
@@ -492,13 +592,13 @@ tr:hover td {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
-  padding-bottom: 10px;
+  font-size: 13px;
+  padding: 9px 0;
   border-bottom: 1px solid #f3f4f6;
 }
 
-.detail-label { 
-  color: #6b7280; 
+.detail-label {
+  color: #6b7280;
 }
 
 .detail-value {
@@ -511,8 +611,8 @@ tr:hover td {
 
 .resume-link {
   color: #2563eb;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
   text-decoration: none;
 }
 
@@ -520,30 +620,90 @@ tr:hover td {
   text-decoration: underline;
 }
 
+.schedule-section {
+  background: #f8faff;
+  border: 1px solid #e0eaff;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.schedule-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #1e40af;
+  margin-bottom: 14px;
+}
+
+.form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.form-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 12.5px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.required {
+  color: #dc2626;
+}
+
+.form-input {
+  padding: 9px 11px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+  transition: 0.2s;
+  background: white;
+  color: #111827;
+}
+
+.form-input:focus {
+  border-color: #2563eb;
+}
+
+.error-msg {
+  margin-top: 10px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 12.5px;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
 .feedback-section {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .feedback-label {
   display: block;
-  font-size: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
   color: #6b7280;
-  margin-bottom: 8px;
-  font-weight: 500;
+  margin-bottom: 7px;
 }
 
 .feedback-input {
   width: 100%;
-  padding: 12px 14px;
+  padding: 10px 12px;
   border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  font-size: 14px;
-  color: #111827;
+  border-radius: 9px;
+  font-size: 13px;
   outline: none;
-  resize: none;
-  transition: 0.2s;
+  resize: vertical;
   font-family: inherit;
-  box-sizing: border-box;
+  color: #111827;
+  transition: 0.2s;
 }
 
 .feedback-input:focus {
@@ -552,57 +712,74 @@ tr:hover td {
 
 .modal-actions {
   display: flex;
-  gap: 10px;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.btn-shortlist,
+.btn-schedule,
+.btn-select,
+.btn-reject,
+.btn-feedback {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
 }
 
 .btn-shortlist {
-  flex: 1;
-  padding: 11px;
-  background: #dbeafe;
-  color: #2563eb;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
+  background: #dcfce7;
+  color: #16a34a;
 }
 
-.btn-shortlist:hover { 
-  background: #bfdbfe; 
+.btn-shortlist:hover {
+  background: #bbf7d0;
+}
+
+.btn-schedule {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.btn-schedule:hover {
+  background: #dbeafe;
+}
+
+.btn-schedule:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-select {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.btn-select:hover {
+  background: #bbf7d0;
 }
 
 .btn-reject {
-  flex: 1;
-  padding: 11px;
   background: #fee2e2;
   color: #dc2626;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
 }
 
-.btn-reject:hover { 
-  background: #fecaca; 
+.btn-reject:hover {
+  background: #fecaca;
 }
 
 .btn-feedback {
-  flex: 1;
-  padding: 11px;
   background: #f3f4f6;
   color: #374151;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
 }
 
-.btn-feedback:hover { 
-  background: #e5e7eb; 
+.btn-feedback:hover {
+  background: #e5e7eb;
 }
+
 </style>
