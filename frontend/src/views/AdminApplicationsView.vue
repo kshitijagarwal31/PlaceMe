@@ -31,7 +31,10 @@
         </thead>
 
         <tbody>
-          <tr v-for="(application, index) in filteredApplications" :key="application.id">
+          <tr
+            v-for="(application, index) in filteredApplications"
+            :key="application.id"
+          >
             <td>{{ index + 1 }}</td>
             <td>{{ application.student_name }}</td>
             <td>{{ application.company_name }}</td>
@@ -56,7 +59,12 @@
       </div>
     </div>
 
-    <div v-if="selectedApplication" class="modal-overlay" @click.self="selectedApplication = null">
+    <!-- MODAL -->
+    <div
+      v-if="selectedApplication"
+      class="modal-overlay"
+      @click.self="selectedApplication = null"
+    >
       <div class="modal">
 
         <div class="modal-header">
@@ -102,18 +110,13 @@
           </div>
 
           <div class="detail-row">
-          <span class="detail-label">Package</span>
-          <span class="detail-value">{{ selectedApplication.package || '—' }}</span>
-        </div>
+            <span class="detail-label">Package</span>
+            <span class="detail-value">{{ selectedApplication.package || '—' }}</span>
+          </div>
 
           <div class="detail-row">
             <span class="detail-label">Applied On</span>
             <span class="detail-value">{{ selectedApplication.apply_date || '—' }}</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="detail-label">Status</span>
-            <span :class="getStatusClass(selectedApplication.status)">{{ selectedApplication.status }}</span>
           </div>
 
           <div class="detail-row">
@@ -123,7 +126,11 @@
 
           <div class="detail-row" v-if="selectedApplication.resume">
             <span class="detail-label">Resume</span>
-            <a :href="selectedApplication.resume" target="_blank" class="resume-link">
+            <a
+              :href="selectedApplication.resume"
+              target="_blank"
+              class="resume-link"
+            >
               📄 View Resume
             </a>
           </div>
@@ -156,6 +163,20 @@ export default {
     }
   },
 
+  computed: {
+    filteredApplications() {
+      const q = this.search.toLowerCase()
+
+      return this.applications.filter((application) => {
+        return (
+          application.student_name.toLowerCase().includes(q) ||
+          application.company_name.toLowerCase().includes(q) ||
+          application.status.toLowerCase().includes(q)
+        )
+      })
+    }
+  },
+
   async mounted() {
     const token = localStorage.getItem("token")
 
@@ -166,28 +187,18 @@ export default {
     this.applications = res.data.applications
   },
 
-  computed: {
-    filteredApplications() {
-      const q = this.search.toLowerCase()
-      return this.applications.filter(a =>
-        a.student_name.toLowerCase().includes(q) ||
-        a.company_name.toLowerCase().includes(q) ||
-        a.status.toLowerCase().includes(q)
-      )
-    }
-  },
-
   methods: {
     viewDetail(application) {
       this.selectedApplication = application
     },
 
     getStatusClass(status) {
-      if (status === 'Selected') return 'badge-selected'
-      if (status === 'Shortlisted') return 'badge-shortlisted'
-      if (status === 'Rejected') return 'badge-rejected'
-      if (status === 'Pending')  return 'badge-pending'
-      if (status === 'Interview Scheduled')  return 'badge-interview'
+      if (status === "Selected") return "badge-selected"
+      if (status === "Shortlisted") return "badge-shortlisted"
+      if (status === "Rejected") return "badge-rejected"
+      if (status === "Pending") return "badge-pending"
+      if (status === "Interview Scheduled") return "badge-interview"
+      return "badge-pending"
     }
   }
 }
@@ -306,8 +317,8 @@ tr:hover td {
 }
 
 .badge-shortlisted {
-  background: #fef9c3;
-  color: #ca8a04;
+  background: #dcfce7;
+  color: #16a34a;
   padding: 5px 12px;
   border-radius: 20px;
   font-size: 13px;
@@ -332,9 +343,9 @@ tr:hover td {
   font-weight: 600;
 }
 
-.badge-interview { 
-  background: #f3e8ff; 
-  color: #7c3aed; 
+.badge-interview {
+  background: #f3e8ff;
+  color: #7c3aed;
   padding: 5px 12px;
   border-radius: 20px;
   font-size: 13px;

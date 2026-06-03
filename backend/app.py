@@ -5,6 +5,7 @@ from flask_security import Security
 from flask_security.utils import hash_password
 from user_datastore import user_datastore 
 from flask_cors import CORS
+from extensions import cache
 
 
 from routes.auth_routes import auth_bp
@@ -18,6 +19,7 @@ def create_app():
     app.config.from_object(LocalDevelopmentConfig)
 
     db.init_app(app)
+    cache.init_app(app)
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     app.register_blueprint(auth_bp)

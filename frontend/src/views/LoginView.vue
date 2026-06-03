@@ -4,12 +4,11 @@
     <Navbar />
 
     <div class="login-page">
-
       <div class="login-card">
 
         <div class="top-section">
           <h2>Welcome Back</h2>
-          <p>Sign in to continue to PlaceMe Portal</p>
+          <p>Sign in to Placement Portal</p>
         </div>
 
         <div v-if="errorMessage" class="error-box">
@@ -20,22 +19,29 @@
 
           <div class="input-group">
             <label>Username</label>
-            <input type="text" v-model="username" placeholder="Enter your username" required />
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Enter your username"
+              required
+            />
           </div>
 
           <div class="input-group">
             <label>Password</label>
-
             <div class="password-box">
               <input
-                :type="showPassword ? 'text' : 'password'"
                 v-model="password"
+                :type="showPassword ? 'text' : 'password'"
                 placeholder="Enter your password"
                 required
               />
-
-              <button type="button" class="show-btn" @click="showPassword = !showPassword">
-                {{ showPassword ? 'Hide' : 'Show' }}
+              <button
+                type="button"
+                class="show-btn"
+                @click="showPassword = !showPassword"
+              >
+                {{ showPassword ? "Hide" : "Show" }}
               </button>
             </div>
           </div>
@@ -53,7 +59,6 @@
         </p>
 
       </div>
-
     </div>
 
     <Footer />
@@ -68,6 +73,7 @@ import axios from "axios"
 
 export default {
   name: "LoginView",
+
   components: {
     Navbar,
     Footer
@@ -106,27 +112,18 @@ export default {
         } else if (role === "student") {
           this.$router.push("/student_dashboard")
         }
-
       } catch (err) {
-          this.errorMessage =
-            err.response?.data?.message ||
-            "Something went wrong!"
+        this.errorMessage =
+          err.response?.data?.message || "Something went wrong!"
       } finally {
         this.loading = false
       }
-
     }
   }
 }
 </script>
 
 <style scoped>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 .page {
   min-height: 100vh;
@@ -139,7 +136,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px 20px;
+  padding: 32px 20px;
   background: #f5f7fb;
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -149,8 +146,9 @@ export default {
   max-width: 420px;
   background: white;
   padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
 }
 
 .top-section {
@@ -159,7 +157,7 @@ export default {
 }
 
 .top-section h2 {
-  font-size: 28px;
+  font-size: 26px;
   color: #111827;
   margin-bottom: 6px;
   font-weight: 700;
@@ -193,21 +191,25 @@ export default {
 
 .input-group input {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #d1d5db;
+  padding: 11px 12px;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   outline: none;
   font-size: 13px;
   transition: 0.2s;
+  box-sizing: border-box;
 }
 
 .input-group input:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 
 .password-box {
   position: relative;
+}
+
+.password-box input {
+  padding-right: 52px;
 }
 
 .show-btn {
@@ -231,9 +233,10 @@ export default {
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
+  margin-top: 4px;
 }
 
 .login-btn:hover {
@@ -242,6 +245,7 @@ export default {
 
 .login-btn:disabled {
   opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .register-text {
@@ -254,7 +258,7 @@ export default {
 .register-text a {
   color: #2563eb;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 </style>

@@ -6,15 +6,15 @@
     </div>
   </div>
 </template>
-
 <script>
 import Sidebar from "../components/Sidebar.vue"
 export default {
   name: "CompanyDashboardView",
-  components: { Sidebar }
+  components: {
+    Sidebar
+  }
 }
 </script>
-
 <style scoped>
 .dashboard {
   display: flex;
@@ -24,6 +24,6 @@ export default {
 }
 .main-content {
   flex: 1;
-  padding: 28px;
+  padding: 32px;
 }
 </style>

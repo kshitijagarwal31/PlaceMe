@@ -4,6 +4,7 @@ from user_datastore import user_datastore
 from database import db 
 from flask_security.utils import hash_password
 from models import StudentProfile, CompanyProfile
+from extensions import cache
 
 auth_bp = Blueprint("auth_bp", __name__)
 

@@ -8,53 +8,64 @@
       </div>
     </div>
 
-    <div v-if="loading" class="empty" style="padding: 60px 0;">
+    <div v-if="loading" class="loading">
       Loading profile...
     </div>
 
     <div v-else class="form-grid">
 
+      <!-- PREVIEW -->
       <div class="section-box">
 
         <div class="preview-top">
-          <div class="preview-avatar">{{ form.full_name ? form.full_name.charAt(0) : '?' }}</div>
-          <h2>{{ form.full_name || 'Company Name' }}</h2>
-          <p>{{ form.industry || 'Industry' }}</p>
+          <div class="preview-avatar">
+            {{ form.full_name ? form.full_name.charAt(0) : "?" }}
+          </div>
+          <h2>{{ form.full_name || "Company Name" }}</h2>
+          <p>{{ form.industry || "Industry" }}</p>
         </div>
 
         <div class="profile-details">
+
           <div class="detail-row">
             <span class="detail-label">Username</span>
-            <span class="detail-value">{{ form.username || '—' }}</span>
+            <span class="detail-value">{{ form.username || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ form.email || '—' }}</span>
+            <span class="detail-value">{{ form.email || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">HR Contact</span>
-            <span class="detail-value">{{ form.hr_contact || '—' }}</span>
+            <span class="detail-value">{{ form.hr_contact || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Address</span>
-            <span class="detail-value">{{ form.address || '—' }}</span>
+            <span class="detail-value">{{ form.address || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Website</span>
-            <span class="detail-value">{{ form.website || '—' }}</span>
+            <span class="detail-value">{{ form.website || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Account Status</span>
             <span class="badge-active">Active</span>
           </div>
+
         </div>
 
         <div class="info-box">
-          <p>💡 Keep your profile updated so students can learn more about your company.</p>
+          <p>Keep your profile updated so students can learn more about your company.</p>
         </div>
 
       </div>
 
+      <!-- FORM -->
       <div class="section-box">
 
         <h3 class="form-title">Company Information</h3>
@@ -62,50 +73,84 @@
         <div class="form-row">
           <div class="form-group">
             <label>Full Name <span class="required">*</span></label>
-            <input v-model="form.full_name" type="text" placeholder="e.g. Google India Pvt Ltd" />
+            <input
+              v-model="form.full_name"
+              type="text"
+              placeholder="e.g. Google India Pvt Ltd"
+            />
           </div>
           <div class="form-group">
             <label>Username <span class="required">*</span></label>
-            <input v-model="form.username" type="text" placeholder="e.g. google_hr" />
+            <input
+              v-model="form.username"
+              type="text"
+              placeholder="e.g. google_hr"
+            />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Email <span class="required">*</span></label>
-            <input v-model="form.email" type="email" placeholder="e.g. hr@google.com" />
+            <input
+              v-model="form.email"
+              type="email"
+              placeholder="e.g. hr@google.com"
+            />
           </div>
           <div class="form-group">
             <label>Industry <span class="required">*</span></label>
-            <input v-model="form.industry" type="text" placeholder="e.g. Information Technology" />
+            <input
+              v-model="form.industry"
+              type="text"
+              placeholder="e.g. Information Technology"
+            />
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>HR Contact Number <span class="required">*</span></label>
-            <input v-model="form.hr_contact" type="text" placeholder="e.g. +91 9876543210" />
+            <input
+              v-model="form.hr_contact"
+              type="text"
+              placeholder="e.g. +91 9876543210"
+            />
           </div>
           <div class="form-group">
             <label>Website Link</label>
-            <input v-model="form.website" type="text" placeholder="e.g. www.google.com" />
+            <input
+              v-model="form.website"
+              type="text"
+              placeholder="e.g. www.google.com"
+            />
           </div>
         </div>
 
         <div class="form-group">
           <label>Address <span class="required">*</span></label>
-          <input v-model="form.address" type="text" placeholder="e.g. 123, MG Road, Bangalore, India" />
+          <input
+            v-model="form.address"
+            type="text"
+            placeholder="e.g. 123, MG Road, Bangalore, India"
+          />
         </div>
 
         <div class="form-group">
           <label>Description</label>
-          <textarea v-model="form.description" placeholder="Write a short description about your company..." rows="4"></textarea>
+          <textarea
+            v-model="form.description"
+            placeholder="Write a short description about your company..."
+            rows="4"
+          ></textarea>
         </div>
 
         <div class="form-bottom">
           <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
-          <p v-if="saved" class="save-msg">✅ Profile saved successfully!</p>
-          <button class="btn-save" @click="saveProfile">Save Profile</button>
+          <p v-if="saved" class="save-msg">Profile saved successfully!</p>
+          <button class="btn-save" @click="saveProfile">
+            Save Profile
+          </button>
         </div>
 
       </div>
@@ -123,18 +168,18 @@ export default {
 
   data() {
     return {
-      loading:  true,
-      saved:    false,
+      loading: true,
+      saved: false,
       errorMsg: "",
       form: {
-        full_name:   "",
-        username:    "",
-        email:       "",
-        industry:    "",
-        hr_contact:  "",
-        website:     "",
-        address:     "",
-        description: "",
+        full_name: "",
+        username: "",
+        email: "",
+        industry: "",
+        hr_contact: "",
+        website: "",
+        address: "",
+        description: ""
       }
     }
   },
@@ -144,30 +189,32 @@ export default {
   },
 
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+          "Authentication-Token": localStorage.getItem("token")
+        }
       }
     },
 
     async fetchProfile() {
       this.loading = true
+
       try {
-        const res = await axios.get("http://localhost:5000/company/complete_profile", this.getHeaders())
+        const res = await axios.get(
+          "http://localhost:5000/company/complete_profile",
+          this.getHeaders()
+        )
         const data = res.data
 
-        this.form.full_name   = data.name              || ""
-        this.form.username    = data.username           || ""
-        this.form.email       = data.email              || ""
-        this.form.industry    = data.industry           || ""
-        this.form.hr_contact  = data.hr_contact_number  || ""
-        this.form.website     = data.website_link       || ""
-        this.form.address     = data.address            || ""
-        this.form.description = data.description        || ""
-
+        this.form.full_name = data.name || ""
+        this.form.username = data.username || ""
+        this.form.email = data.email || ""
+        this.form.industry = data.industry || ""
+        this.form.hr_contact = data.hr_contact_number || ""
+        this.form.website = data.website_link || ""
+        this.form.address = data.address || ""
+        this.form.description = data.description || ""
       } catch (err) {
         console.error("Profile load failed:", err)
       } finally {
@@ -176,8 +223,15 @@ export default {
     },
 
     async saveProfile() {
-      const required = ['full_name', 'username', 'email', 'industry', 'hr_contact', 'address']
-      const allFilled = required.every(f => this.form[f] !== '')
+      const required = [
+        "full_name",
+        "username",
+        "email",
+        "industry",
+        "hr_contact",
+        "address"
+      ]
+      const allFilled = required.every((field) => this.form[field] !== "")
 
       if (!allFilled) {
         this.errorMsg = "Please fill all required fields!"
@@ -190,21 +244,22 @@ export default {
         await axios.post(
           "http://localhost:5000/company/complete_profile",
           {
-            name:              this.form.full_name,
-            username:          this.form.username,
-            email:             this.form.email,
-            industry:          this.form.industry,
+            name: this.form.full_name,
+            username: this.form.username,
+            email: this.form.email,
+            industry: this.form.industry,
             hr_contact_number: this.form.hr_contact,
-            website_link:      this.form.website,
-            address:           this.form.address,
-            description:       this.form.description,
+            website_link: this.form.website,
+            address: this.form.address,
+            description: this.form.description
           },
           this.getHeaders()
         )
 
         this.saved = true
-        setTimeout(() => { this.saved = false }, 3000)
-
+        setTimeout(() => {
+          this.saved = false
+        }, 3000)
       } catch (err) {
         console.error("Profile save failed:", err)
         this.errorMsg = "Something went wrong! Try again."
@@ -217,37 +272,38 @@ export default {
 <style scoped>
 
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 27px;
-  flex-wrap: wrap;
-  gap: 16px;
+  margin-bottom: 26px;
 }
 
 .topbar h1 {
-  font-size: 30.5px;
+  font-size: 30px;
   color: #111827;
-  font-weight: 700;
+  margin-bottom: 3px;
 }
 
 .topbar p {
-  font-size: 13.5px;
+  font-size: 13px;
   color: #6b7280;
-  margin-top: 4px;
+}
+
+.loading {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 60px 0;
 }
 
 .form-grid {
   display: grid;
-  grid-template-columns: 1fr 1.8fr;
-  gap: 18px;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 16px;
 }
 
 .section-box {
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
 }
 
 .preview-top {
@@ -255,27 +311,27 @@ export default {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 22px;
+  padding-bottom: 18px;
   border-bottom: 1px solid #f3f4f6;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .preview-avatar {
-  width: 66px;
-  height: 66px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 27px;
+  font-size: 26px;
   font-weight: 700;
   margin-bottom: 12px;
 }
 
 .preview-top h2 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: #111827;
   margin-bottom: 3px;
@@ -289,8 +345,8 @@ export default {
 .profile-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 22px;
+  gap: 8px;
+  margin-bottom: 18px;
 }
 
 .detail-row {
@@ -298,7 +354,7 @@ export default {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  padding-bottom: 9px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -317,23 +373,23 @@ export default {
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 16px;
 }
 
 .info-box {
   background: #eff6ff;
   border-radius: 10px;
-  padding: 13px;
-  font-size: 12.5px;
+  padding: 12px;
+  font-size: 13px;
   color: #2563eb;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .form-title {
-  font-size: 16.5px;
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
   margin-bottom: 18px;
@@ -351,10 +407,10 @@ export default {
 
 .form-group label {
   display: block;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .required {
@@ -364,7 +420,7 @@ export default {
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 9px 13px;
+  padding: 10px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   font-size: 13px;
@@ -373,11 +429,16 @@ export default {
   font-family: inherit;
   background: white;
   box-sizing: border-box;
+  color: #111827;
 }
 
 .form-group input:focus,
 .form-group textarea:focus {
   border-color: #2563eb;
+}
+
+.form-bottom {
+  margin-top: 4px;
 }
 
 .btn-save {
@@ -401,20 +462,14 @@ export default {
   color: #16a34a;
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 }
 
 .error-msg {
   color: #dc2626;
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 9px;
-}
-
-.empty {
-  text-align: center;
-  color: #9ca3af;
-  font-size: 14px;
+  margin-bottom: 8px;
 }
 
 </style>

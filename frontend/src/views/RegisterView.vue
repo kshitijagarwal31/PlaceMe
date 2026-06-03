@@ -4,12 +4,11 @@
     <Navbar />
 
     <div class="register-page">
-
       <div class="register-card">
 
         <div class="top-section">
           <h2>Create Account</h2>
-          <p>Register to continue to PlaceMe Portal</p>
+          <p>Register on Placement Portal</p>
         </div>
 
         <div v-if="errorMessage" class="error-box">
@@ -17,24 +16,39 @@
         </div>
 
         <div v-if="successMessage" class="success-box">
-          ✅ {{ successMessage }}
+          {{ successMessage }}
         </div>
 
         <form @submit.prevent="handleRegister">
 
           <div class="input-group">
             <label>Full Name</label>
-            <input type="text" v-model="fullName" placeholder="Enter your name" required />
+            <input
+              v-model="fullName"
+              type="text"
+              placeholder="Enter your name"
+              required
+            />
           </div>
 
           <div class="input-group">
             <label>Username</label>
-            <input type="text" v-model="username" placeholder="Enter username" required />
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Enter username"
+              required
+            />
           </div>
 
           <div class="input-group">
             <label>Email</label>
-            <input type="email" v-model="email" placeholder="Enter email" required />
+            <input
+              v-model="email"
+              type="email"
+              placeholder="Enter email"
+              required
+            />
           </div>
 
           <div class="input-group">
@@ -50,18 +64,22 @@
             <label>Password</label>
             <div class="password-box">
               <input
-                :type="showPassword ? 'text' : 'password'"
                 v-model="password"
+                :type="showPassword ? 'text' : 'password'"
                 placeholder="Create password"
                 required
               />
-              <button type="button" class="show-btn" @click="showPassword = !showPassword">
-                {{ showPassword ? 'Hide' : 'Show' }}
+              <button
+                type="button"
+                class="show-btn"
+                @click="showPassword = !showPassword"
+              >
+                {{ showPassword ? "Hide" : "Show" }}
               </button>
             </div>
           </div>
 
-          <button type="submit" class="btn" :disabled="loading">
+          <button type="submit" class="register-btn" :disabled="loading">
             <span v-if="loading">Creating Account...</span>
             <span v-else>Register</span>
           </button>
@@ -74,7 +92,6 @@
         </p>
 
       </div>
-
     </div>
 
     <Footer />
@@ -89,6 +106,7 @@ import axios from "axios"
 
 export default {
   name: "RegisterView",
+
   components: {
     Navbar,
     Footer
@@ -96,33 +114,34 @@ export default {
 
   data() {
     return {
-      fullName:       "",
-      username:       "",
-      email:          "",
-      role:           "",
-      password:       "",
-      showPassword:   false,
-      loading:        false,
-      errorMessage:   "",
+      fullName: "",
+      username: "",
+      email: "",
+      role: "",
+      password: "",
+      showPassword: false,
+      loading: false,
+      errorMessage: "",
       successMessage: ""
     }
   },
 
   methods: {
     async handleRegister() {
-      this.errorMessage   = ""
+      this.errorMessage = ""
       this.successMessage = ""
-      this.loading        = true
+      this.loading = true
 
-      const url = this.role === "student"
-        ? "http://localhost:5000/register/student"
-        : "http://localhost:5000/register/company"
+      const url =
+        this.role === "student"
+          ? "http://localhost:5000/register/student"
+          : "http://localhost:5000/register/company"
 
       try {
         const res = await axios.post(url, {
-          name:     this.fullName,
+          name: this.fullName,
           username: this.username,
-          email:    this.email,
+          email: this.email,
           password: this.password
         })
 
@@ -131,9 +150,9 @@ export default {
         setTimeout(() => {
           this.$router.push("/login")
         }, 2000)
-
       } catch (err) {
-        this.errorMessage = err.response.data.message
+        this.errorMessage =
+          err.response?.data?.message || "Something went wrong!"
       } finally {
         this.loading = false
       }
@@ -143,12 +162,6 @@ export default {
 </script>
 
 <style scoped>
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 
 .page {
   min-height: 100vh;
@@ -162,7 +175,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 30px 20px;
+  padding: 32px 20px;
   background: #f5f7fb;
 }
 
@@ -171,8 +184,9 @@ export default {
   max-width: 420px;
   background: white;
   padding: 32px;
-  border-radius: 16px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
 }
 
 .top-section {
@@ -181,7 +195,7 @@ export default {
 }
 
 .top-section h2 {
-  font-size: 28px;
+  font-size: 26px;
   color: #111827;
   margin-bottom: 6px;
   font-weight: 700;
@@ -226,23 +240,27 @@ export default {
 .input-group input,
 .input-group select {
   width: 100%;
-  padding: 12px;
-  border: 1px solid #d1d5db;
+  padding: 11px 12px;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   outline: none;
   font-size: 13px;
   transition: 0.2s;
   background: white;
+  box-sizing: border-box;
 }
 
 .input-group input:focus,
 .input-group select:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
 }
 
 .password-box {
   position: relative;
+}
+
+.password-box input {
+  padding-right: 52px;
 }
 
 .show-btn {
@@ -258,7 +276,7 @@ export default {
   font-weight: 600;
 }
 
-.btn {
+.register-btn {
   width: 100%;
   padding: 12px;
   background: #2563eb;
@@ -266,17 +284,19 @@ export default {
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
+  margin-top: 4px;
 }
 
-.btn:hover {
+.register-btn:hover {
   background: #1d4ed8;
 }
 
-.btn:disabled {
+.register-btn:disabled {
   opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .bottom-text {
@@ -289,7 +309,7 @@ export default {
 .bottom-text a {
   color: #2563eb;
   text-decoration: none;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 </style>

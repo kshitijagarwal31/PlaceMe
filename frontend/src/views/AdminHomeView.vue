@@ -3,17 +3,18 @@
 
     <div class="topbar">
       <div>
-        <h1>Welcome, {{ adminName }}! </h1>
+        <h1>Welcome, {{ adminName }}!</h1>
         <p>Here's your placement overview</p>
       </div>
     </div>
 
-    <div v-if="loading" class="empty" style="padding: 60px 0;">
+    <div v-if="loading" class="loading">
       Loading dashboard...
     </div>
 
     <div v-else>
 
+      <!-- STATS -->
       <div class="cards">
         <div class="card">
           <h2>{{ stats.total_students }}</h2>
@@ -41,6 +42,7 @@
         </div>
       </div>
 
+      <!-- REQUESTS -->
       <div class="requests-grid">
 
         <div class="section-box">
@@ -59,15 +61,19 @@
             class="request-item"
           >
             <div class="request-left">
-              <div class="avatar">{{ company.name.charAt(0) }}</div>
+              <div class="avatar">{{ company.name?.charAt(0) || '?' }}</div>
               <div>
                 <p class="request-name">{{ company.name }}</p>
                 <p class="request-sub">{{ company.industry }} · {{ company.address }}</p>
               </div>
             </div>
             <div class="request-actions">
-              <button class="btn-approve" @click="approveCompany(company)">Approve</button>
-              <button class="btn-reject"  @click="rejectCompany(company)">Reject</button>
+              <button class="btn-approve" @click="approveCompany(company)">
+                Approve
+              </button>
+              <button class="btn-reject" @click="rejectCompany(company)">
+                Reject
+              </button>
             </div>
           </div>
 
@@ -92,15 +98,19 @@
             class="request-item"
           >
             <div class="request-left">
-              <div class="avatar">{{ drive.company_name.charAt(0) }}</div>
+              <div class="avatar">{{ drive.company_name?.charAt(0) || '?' }}</div>
               <div>
                 <p class="request-name">{{ drive.company_name }}</p>
                 <p class="request-sub">{{ drive.job_title }} · {{ drive.start_date }}</p>
               </div>
             </div>
             <div class="request-actions">
-              <button class="btn-approve" @click="approveDrive(drive)">Approve</button>
-              <button class="btn-reject"  @click="rejectDrive(drive)">Reject</button>
+              <button class="btn-approve" @click="approveDrive(drive)">
+                Approve
+              </button>
+              <button class="btn-reject" @click="rejectDrive(drive)">
+                Reject
+              </button>
             </div>
           </div>
 
@@ -116,7 +126,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
 
 export default {
   name: "AdminHomeView",
@@ -126,123 +136,162 @@ export default {
       adminName: "",
       loading: true,
       stats: {
-        total_students:     0,
-        total_companies:    0,
-        total_drives:       0,
+        total_students: 0,
+        total_companies: 0,
+        total_drives: 0,
         total_applications: 0,
-        total_placements:   0,
-        placement_rate:     0,
+        total_placements: 0,
+        placement_rate: 0
       },
       pendingCompanies: [],
-      pendingDrives:    [],
-    };
+      pendingDrives: []
+    }
   },
 
   async mounted() {
-    await this.fetchDashboardData();
+    await this.fetchDashboardData()
   },
 
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"), 
-        },
-      };
+          "Authentication-Token": localStorage.getItem("token")
+        }
+      }
     },
 
     async fetchDashboardData() {
-      this.loading = true;
+      this.loading = true
+
       try {
-        const res = await axios.get("http://localhost:5000/admin/dashboard_data", this.getHeaders()); 
-        console.log("Full response:", res.data);
-        this.stats            = res.data.stats             || this.stats;
-        this.pendingCompanies = res.data.pending_companies || [];
-        this.pendingDrives    = res.data.pending_drives    || [];
-        this.adminName        = res.data.admin_name        || [];
+        const res = await axios.get(
+          "http://localhost:5000/admin/dashboard_data",
+          this.getHeaders()
+        )
+
+        this.stats = res.data.stats || this.stats
+        this.pendingCompanies = res.data.pending_companies || []
+        this.pendingDrives = res.data.pending_drives || []
+        this.adminName = res.data.admin_name || ""
       } catch (err) {
-        console.error("Error:", err.response);
+        console.error("Error:", err.response)
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
     async approveCompany(company) {
       try {
-        await axios.post(`http://localhost:5000/admin/company/approve/${company.id}`, {}, this.getHeaders());
-        this.pendingCompanies = this.pendingCompanies.filter(c => c.id !== company.id);
-        this.stats.total_companies++;
+        await axios.post(
+          `http://localhost:5000/admin/company/approve/${company.id}`,
+          {},
+          this.getHeaders()
+        )
+        this.pendingCompanies = this.pendingCompanies.filter(
+          (item) => item.id !== company.id
+        )
+        this.stats.total_companies++
       } catch (err) {
-        console.error("Approve company failed:", err);
-        alert("Could not approve company.");
+        console.error("Approve company failed:", err)
+        alert("Could not approve company.")
       }
     },
 
     async rejectCompany(company) {
       try {
-        await axios.post(`http://localhost:5000/admin/company/reject/${company.id}`, {}, this.getHeaders());
-        this.pendingCompanies = this.pendingCompanies.filter(c => c.id !== company.id);
+        await axios.post(
+          `http://localhost:5000/admin/company/reject/${company.id}`,
+          {},
+          this.getHeaders()
+        )
+        this.pendingCompanies = this.pendingCompanies.filter(
+          (item) => item.id !== company.id
+        )
       } catch (err) {
-        console.error("Reject company failed:", err);
-        alert("Could not reject company.");
+        console.error("Reject company failed:", err)
+        alert("Could not reject company.")
       }
     },
 
     async approveDrive(drive) {
       try {
-        await axios.post(`http://localhost:5000/admin/placement_drive/approve/${drive.id}`, {}, this.getHeaders());
-        this.pendingDrives = this.pendingDrives.filter(d => d.id !== drive.id);
-        this.stats.total_drives++;
+        await axios.post(
+          `http://localhost:5000/admin/placement_drive/approve/${drive.id}`,
+          {},
+          this.getHeaders()
+        )
+        this.pendingDrives = this.pendingDrives.filter(
+          (item) => item.id !== drive.id
+        )
+        this.stats.total_drives++
       } catch (err) {
-        console.error("Approve drive failed:", err);
-        alert("Could not approve drive.");
+        console.error("Approve drive failed:", err)
+        alert("Could not approve drive.")
       }
     },
 
     async rejectDrive(drive) {
       try {
-        await axios.post(`http://localhost:5000/admin/placement_drive/reject/${drive.id}`, {}, this.getHeaders());
-        this.pendingDrives = this.pendingDrives.filter(d => d.id !== drive.id);
+        await axios.post(
+          `http://localhost:5000/admin/placement_drive/reject/${drive.id}`,
+          {},
+          this.getHeaders()
+        )
+        this.pendingDrives = this.pendingDrives.filter(
+          (item) => item.id !== drive.id
+        )
       } catch (err) {
-        console.error("Reject drive failed:", err);
-        alert("Could not reject drive.");
+        console.error("Reject drive failed:", err)
+        alert("Could not reject drive.")
       }
-    },
-
-  },
-};
+    }
+  }
+}
 </script>
 
 <style scoped>
 
 .topbar {
-  margin-bottom: 27px;
+  margin-bottom: 26px;
 }
 
 .topbar h1 {
-  font-size: 31px;
+  font-size: 30px;
   color: #111827;
+  margin-bottom: 3px;
+}
+
+.topbar p {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.loading {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 60px 0;
 }
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(162px, 1fr));
-  gap: 18px;
-  margin-bottom: 27px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 26px;
 }
 
 .card {
   background: white;
   padding: 22px;
-  border-radius: 16px;
-  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
 }
 
 .card h2 {
-  font-size: 27px;
+  font-size: 28px;
   color: #2563eb;
-  margin-bottom: 7px;
+  margin-bottom: 6px;
   font-weight: 700;
 }
 
@@ -254,13 +303,13 @@ export default {
 .requests-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 16px;
 }
 
 .section-box {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
   padding: 22px;
 }
 
@@ -272,7 +321,7 @@ export default {
 }
 
 .section-header h3 {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
 }
@@ -282,15 +331,16 @@ export default {
   color: #ca8a04;
   font-size: 12px;
   font-weight: 600;
-  padding: 4px 11px;
-  border-radius: 18px;
+  padding: 5px 12px;
+  border-radius: 20px;
 }
 
 .request-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 13px 0;
+  gap: 12px;
+  padding: 12px 0;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -301,7 +351,8 @@ export default {
 .request-left {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .avatar {
@@ -332,14 +383,15 @@ export default {
 
 .request-actions {
   display: flex;
-  gap: 7px;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-approve {
   background: #dcfce7;
   color: #16a34a;
   border: none;
-  padding: 6px 13px;
+  padding: 7px 12px;
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
@@ -355,7 +407,7 @@ export default {
   background: #fee2e2;
   color: #dc2626;
   border: none;
-  padding: 6px 13px;
+  padding: 7px 12px;
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
@@ -370,15 +422,15 @@ export default {
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 13px;
-  padding: 27px 0;
+  font-size: 14px;
+  padding: 35px 0;
 }
 
 .view-all {
   text-align: center;
   color: #9ca3af;
   font-size: 12px;
-  margin-top: 13px;
+  margin-top: 12px;
 }
 
 </style>

@@ -10,61 +10,86 @@
 
     <div class="form-grid">
 
+      <!-- PREVIEW -->
       <div class="section-box">
 
         <div class="preview-top">
-          <div class="preview-avatar">{{ form.job_title ? form.job_title.charAt(0) : '?' }}</div>
-          <h2>{{ form.job_title || 'Job Title' }}</h2>
-          <p>{{ form.salary || 'Package' }}</p>
+          <div class="preview-avatar">
+            {{ form.job_title ? form.job_title.charAt(0) : "?" }}
+          </div>
+          <h2>{{ form.job_title || "Job Title" }}</h2>
+          <p>{{ form.salary || "Package" }}</p>
         </div>
 
         <div class="profile-details">
+
           <div class="detail-row">
             <span class="detail-label">Start Date</span>
-            <span class="detail-value">{{ form.start_date || '—' }}</span>
+            <span class="detail-value">{{ form.start_date || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Last Date</span>
-            <span class="detail-value">{{ form.last_date || '—' }}</span>
+            <span class="detail-value">{{ form.last_date || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Skills Required</span>
-            <span class="detail-value">{{ form.skills_required || '—' }}</span>
+            <span class="detail-value">{{ form.skills_required || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Job Description</span>
-            <span class="detail-value">{{ form.job_description || '—' }}</span>
+            <span class="detail-value">{{ form.job_description || "—" }}</span>
           </div>
+
         </div>
 
         <div class="info-box">
-          <p>⚠️ After submission, admin will review and approve your drive.</p>
+          <p>After submission, admin will review and approve your drive.</p>
         </div>
 
       </div>
 
+      <!-- FORM -->
       <div class="section-box">
 
         <h3 class="form-title">Drive Details</h3>
 
         <div class="form-group">
           <label>Job Title <span class="required">*</span></label>
-          <input v-model="form.job_title" type="text" placeholder="e.g. Software Engineer" />
+          <input
+            v-model="form.job_title"
+            type="text"
+            placeholder="e.g. Software Engineer"
+          />
         </div>
 
         <div class="form-group">
           <label>Job Description <span class="required">*</span></label>
-          <textarea v-model="form.job_description" placeholder="Describe the job role, responsibilities..." rows="4"></textarea>
+          <textarea
+            v-model="form.job_description"
+            placeholder="Describe the job role, responsibilities..."
+            rows="4"
+          ></textarea>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label>Package / Salary</label>
-            <input v-model="form.salary" type="text" placeholder="e.g. 12 LPA" />
+            <input
+              v-model="form.salary"
+              type="text"
+              placeholder="e.g. 12 LPA"
+            />
           </div>
           <div class="form-group">
             <label>Skills Required</label>
-            <input v-model="form.skills_required" type="text" placeholder="e.g. Python, React, SQL" />
+            <input
+              v-model="form.skills_required"
+              type="text"
+              placeholder="e.g. Python, React, SQL"
+            />
           </div>
         </div>
 
@@ -81,8 +106,12 @@
 
         <div class="form-bottom">
           <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
-          <p v-if="submitted" class="save-msg">✅ Drive submitted! Waiting for admin approval.</p>
-          <button class="btn-save" @click="submitDrive">Submit Drive</button>
+          <p v-if="submitted" class="save-msg">
+            Drive submitted! Waiting for admin approval.
+          </p>
+          <button class="btn-save" @click="submitDrive">
+            Submit Drive
+          </button>
         </div>
 
       </div>
@@ -101,31 +130,30 @@ export default {
   data() {
     return {
       submitted: false,
-      errorMsg:  "",
+      errorMsg: "",
       form: {
-        job_title:       "",
+        job_title: "",
         job_description: "",
-        salary:          "",
+        salary: "",
         skills_required: "",
-        start_date:      "",
-        last_date:       "",
+        start_date: "",
+        last_date: ""
       }
     }
   },
 
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+          "Authentication-Token": localStorage.getItem("token")
+        }
       }
     },
 
     async submitDrive() {
-      const required = ['job_title', 'job_description', 'start_date', 'last_date']
-      const allFilled = required.every(f => this.form[f] !== '')
+      const required = ["job_title", "job_description", "start_date", "last_date"]
+      const allFilled = required.every((field) => this.form[field] !== "")
 
       if (!allFilled) {
         this.errorMsg = "Please fill all required fields!"
@@ -151,17 +179,17 @@ export default {
         setTimeout(() => {
           this.submitted = false
           this.form = {
-            job_title:       "",
+            job_title: "",
             job_description: "",
-            salary:          "",
+            salary: "",
             skills_required: "",
-            start_date:      "",
-            last_date:       "",
+            start_date: "",
+            last_date: ""
           }
         }, 3000)
-
       } catch (err) {
         console.error("Drive submit failed:", err)
+
         if (err.response && err.response.status === 403) {
           this.errorMsg = err.response.data.message
         } else {
@@ -176,31 +204,31 @@ export default {
 <style scoped>
 
 .topbar {
-  margin-bottom: 27px;
+  margin-bottom: 26px;
 }
 
 .topbar h1 {
-  font-size: 30.5px;
+  font-size: 30px;
   color: #111827;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .topbar p {
   color: #6b7280;
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1.6fr;
-  gap: 18px;
+  gap: 16px;
 }
 
 .section-box {
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  padding: 24px;
 }
 
 .preview-top {
@@ -208,27 +236,27 @@ export default {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-bottom: 22px;
+  padding-bottom: 18px;
   border-bottom: 1px solid #f3f4f6;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .preview-avatar {
-  width: 66px;
-  height: 66px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 27px;
+  font-size: 26px;
   font-weight: 700;
   margin-bottom: 12px;
 }
 
 .preview-top h2 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: #111827;
   margin-bottom: 3px;
@@ -242,8 +270,8 @@ export default {
 .profile-details {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 22px;
+  gap: 8px;
+  margin-bottom: 18px;
 }
 
 .detail-row {
@@ -251,12 +279,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  padding-bottom: 9px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #f3f4f6;
 }
 
-.detail-label { 
-  color: #6b7280; 
+.detail-label {
+  color: #6b7280;
 }
 
 .detail-value {
@@ -270,14 +298,14 @@ export default {
 .info-box {
   background: #eff6ff;
   border-radius: 10px;
-  padding: 13px;
-  font-size: 12.5px;
+  padding: 12px;
+  font-size: 13px;
   color: #2563eb;
-  line-height: 1.6;
+  line-height: 1.5;
 }
 
 .form-title {
-  font-size: 16.5px;
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
   margin-bottom: 18px;
@@ -289,26 +317,26 @@ export default {
   gap: 12px;
 }
 
-.form-group { 
-  margin-bottom: 14px; 
+.form-group {
+  margin-bottom: 14px;
 }
 
 .form-group label {
   display: block;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 600;
   color: #374151;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
-.required { 
-  color: #dc2626; 
+.required {
+  color: #dc2626;
 }
 
 .form-group input,
 .form-group textarea {
   width: 100%;
-  padding: 9px 13px;
+  padding: 10px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   font-size: 13px;
@@ -317,6 +345,7 @@ export default {
   transition: 0.2s;
   box-sizing: border-box;
   background: white;
+  font-family: inherit;
 }
 
 .form-group input:focus,
@@ -324,8 +353,8 @@ export default {
   border-color: #2563eb;
 }
 
-.form-bottom { 
-  margin-top: 3px; 
+.form-bottom {
+  margin-top: 4px;
 }
 
 .btn-save {
@@ -341,22 +370,22 @@ export default {
   transition: 0.2s;
 }
 
-.btn-save:hover { 
-  background: #1d4ed8; 
+.btn-save:hover {
+  background: #1d4ed8;
 }
 
 .save-msg {
   color: #16a34a;
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 }
 
 .error-msg {
   color: #dc2626;
   font-size: 13px;
   font-weight: 600;
-  margin-bottom: 9px;
+  margin-bottom: 8px;
 }
 
 </style>

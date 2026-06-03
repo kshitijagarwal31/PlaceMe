@@ -2,6 +2,7 @@ from flask import Blueprint, request, make_response, jsonify
 from flask_security import auth_required, roles_required, current_user
 from database import db
 from models import StudentProfile, PlacementDrive, Application
+from extensions import cache
 
 
 student_bp = Blueprint("student_bp", __name__)
@@ -205,6 +206,7 @@ def complete_profile():
             profile.resume = f"/static/resumes/{filename}"
 
         db.session.commit()
+        
         return jsonify({"message": "Profile updated successfully"}), 200
 
 

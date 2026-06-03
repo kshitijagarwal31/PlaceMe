@@ -3,26 +3,28 @@
 
     <div class="topbar">
       <div>
-        <h1>Welcome, {{ companyName }}! </h1>
+        <h1>Welcome, {{ companyName }}!</h1>
         <p>Here's your placement overview</p>
       </div>
     </div>
 
     <div v-if="!checkingProfile && !isProfileComplete" class="profile-banner">
       <div class="banner-left">
-        <span class="banner-icon">⚠️</span>
         <div>
           <p class="banner-title">Complete Your Profile First!</p>
-          <p class="banner-sub">First complete your profile before creating a Placement Drive.</p>
+          <p class="banner-sub">Complete your profile before creating a Placement Drive.</p>
         </div>
       </div>
-      <button class="btn-complete" @click="goToProfile">Complete Profile</button>
+      <button class="btn-complete" @click="goToProfile">
+        Complete Profile
+      </button>
     </div>
 
-    <div v-if="loadingStats" class="empty" style="padding: 40px 0;">
+    <div v-if="loadingStats" class="loading">
       Loading...
     </div>
 
+    <!-- STATS -->
     <div v-else class="cards">
       <div class="card">
         <h2>{{ stats.total_drives }}</h2>
@@ -42,49 +44,45 @@
       </div>
     </div>
 
-    <div class="requests-grid">
+    <div v-if="!loadingStats" class="requests-grid">
 
+      <!-- APPLICATIONS -->
       <div class="section-box">
         <div class="section-header">
           <h3>Recent Applicants</h3>
         </div>
 
-        <div v-if="loadingStats" class="empty">Loading...</div>
-
-        <div v-else-if="applications.length === 0" class="empty">
+        <div v-if="applications.length === 0" class="empty">
           No applicants yet
         </div>
 
         <div
-          v-for="app in applications.slice(0, 5)"
-          :key="app.id"
+          v-for="application in applications.slice(0, 5)"
+          :key="application.id"
           class="request-item"
         >
           <div class="request-left">
-            <div class="avatar">{{ app.student_name.charAt(0) }}</div>
+            <div class="avatar">
+              {{ application.student_name?.charAt(0) || "?" }}
+            </div>
             <div>
-              <p class="request-name">{{ app.student_name }}</p>
-              <p class="request-sub">{{ app.drive_title }}</p>
+              <p class="request-name">{{ application.student_name }}</p>
+              <p class="request-sub">{{ application.drive_title }}</p>
             </div>
           </div>
-          <span :class="
-            app.status === 'Selected'    ? 'badge-selected' :
-            app.status === 'Pending'     ? 'badge-pending'  :
-            app.status === 'Shortlisted' ? 'badge-active'   :
-            app.status === 'Interview Scheduled'  ? 'badge-interview' :
-            'badge-rejected'
-          ">{{ app.status }}</span>
+          <span :class="getStatusClass(application.status)">
+            {{ application.status }}
+          </span>
         </div>
       </div>
 
+      <!-- DRIVES -->
       <div class="section-box">
         <div class="section-header">
           <h3>Active Drives</h3>
         </div>
 
-        <div v-if="loadingStats" class="empty">Loading...</div>
-
-        <div v-else-if="drives.length === 0" class="empty">
+        <div v-if="drives.length === 0" class="empty">
           No drives yet
         </div>
 
@@ -94,17 +92,17 @@
           class="request-item"
         >
           <div class="request-left">
-            <div class="avatar">{{ drive.job_title.charAt(0) }}</div>
+            <div class="avatar">
+              {{ drive.job_title?.charAt(0) || "?" }}
+            </div>
             <div>
               <p class="request-name">{{ drive.job_title }}</p>
               <p class="request-sub">{{ drive.start_date }} · {{ drive.end_date }}</p>
             </div>
           </div>
-          <span :class="
-            drive.status === 'Active'  ? 'badge-active'  :
-            drive.status === 'Pending' ? 'badge-pending' :
-            'badge-completed'
-          ">{{ drive.status }}</span>
+          <span :class="getDriveStatusClass(drive.status)">
+            {{ drive.status }}
+          </span>
         </div>
       </div>
 
@@ -114,7 +112,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import axios from "axios"
 
 export default {
   name: "CompanyHomeView",
@@ -123,16 +121,16 @@ export default {
     return {
       companyName: "",
       isProfileComplete: false,
-      checkingProfile:   true,
-      loadingStats:      true,
+      checkingProfile: true,
+      loadingStats: true,
       stats: {
-        total_drives:       0,
-        active_drives:      0,
+        total_drives: 0,
+        active_drives: 0,
         total_applications: 0,
-        selected_count:     0,  
+        selected_count: 0
       },
       applications: [],
-      drives:       [],
+      drives: []
     }
   },
 
@@ -142,21 +140,47 @@ export default {
   },
 
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+          "Authentication-Token": localStorage.getItem("token")
+        }
       }
+    },
+
+    getStatusClass(status) {
+      if (status === "Pending") return "badge-pending"
+      if (status === "Shortlisted") return "badge-shortlisted"
+      if (status === "Rejected") return "badge-rejected"
+      if (status === "Selected") return "badge-selected"
+      if (status === "Interview Scheduled") return "badge-interview"
+      return "badge-pending"
+    },
+
+    getDriveStatusClass(status) {
+      if (status === "Active") return "badge-active"
+      if (status === "Pending") return "badge-pending"
+      if (status === "Closed") return "badge-closed"
+      return "badge-closed"
     },
 
     async checkProfile() {
       this.checkingProfile = true
+
       try {
-        const res = await axios.get("http://localhost:5000/company/complete_profile", this.getHeaders())
+        const res = await axios.get(
+          "http://localhost:5000/company/complete_profile",
+          this.getHeaders()
+        )
         const profile = res.data
-        if (profile.name && profile.industry && profile.address && profile.hr_contact_number && profile.website_link) {
+
+        if (
+          profile.name &&
+          profile.industry &&
+          profile.address &&
+          profile.hr_contact_number &&
+          profile.website_link
+        ) {
           this.isProfileComplete = true
         } else {
           this.isProfileComplete = false
@@ -171,13 +195,18 @@ export default {
 
     async fetchDashboardData() {
       this.loadingStats = true
+
       try {
-        const res = await axios.get("http://localhost:5000/company/dashboard_data", this.getHeaders())
+        const res = await axios.get(
+          "http://localhost:5000/company/dashboard_data",
+          this.getHeaders()
+        )
         const data = res.data
-        this.stats        = data.stats
-        this.applications = data.applications
-        this.drives       = data.placement_drives
-        this.companyName  = data.company_name || ""
+
+        this.stats = data.stats || this.stats
+        this.applications = data.applications || []
+        this.drives = data.placement_drives || []
+        this.companyName = data.company_name || ""
       } catch (err) {
         console.error("Dashboard data load failed:", err)
       } finally {
@@ -188,7 +217,6 @@ export default {
     goToProfile() {
       this.$router.push("/company_dashboard/profile")
     }
-
   }
 }
 </script>
@@ -199,10 +227,12 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   background: #fefce8;
   border: 1px solid #fde047;
   border-radius: 14px;
-  padding: 15px 19px;
+  padding: 14px 18px;
   margin-bottom: 22px;
 }
 
@@ -210,10 +240,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.banner-icon {
-  font-size: 21px;
 }
 
 .banner-title {
@@ -225,18 +251,20 @@ export default {
 .banner-sub {
   font-size: 12px;
   color: #a16207;
+  margin-top: 2px;
 }
 
 .btn-complete {
   background: #ca8a04;
   color: white;
   border: none;
-  padding: 9px 18px;
+  padding: 9px 16px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: 0.2s;
 }
 
 .btn-complete:hover {
@@ -250,30 +278,37 @@ export default {
 .topbar h1 {
   font-size: 30px;
   color: #111827;
+  margin-bottom: 3px;
 }
 
 .topbar p {
   font-size: 13px;
   color: #6b7280;
-  margin-top: 4px;
+}
+
+.loading {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 40px 0;
 }
 
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
   margin-bottom: 26px;
 }
 
 .card {
   background: white;
   padding: 22px;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
 }
 
 .card h2 {
-  font-size: 27px;
+  font-size: 28px;
   color: #2563eb;
   margin-bottom: 6px;
   font-weight: 700;
@@ -287,14 +322,14 @@ export default {
 .requests-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 18px;
+  gap: 16px;
 }
 
 .section-box {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
+  padding: 22px;
 }
 
 .section-header {
@@ -311,14 +346,20 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid #f3f4f6;
+}
+
+.request-item:last-of-type {
+  border-bottom: none;
 }
 
 .request-left {
   display: flex;
   align-items: center;
-  gap: 11px;
+  gap: 12px;
+  min-width: 0;
 }
 
 .avatar {
@@ -347,54 +388,81 @@ export default {
   margin-top: 2px;
 }
 
-.badge-selected,
-.badge-pending,
-.badge-rejected,
-.badge-active,
-.badge-completed,
-.badge-interview {
-  font-size: 11.5px;
+.badge-pending {
+  background: #fef9c3;
+  color: #ca8a04;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 16px;
+  white-space: nowrap;
+}
+
+.badge-shortlisted {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
   white-space: nowrap;
 }
 
 .badge-selected {
   background: #dbeafe;
   color: #2563eb;
-}
-
-.badge-pending {
-  background: #fef9c3;
-  color: #ca8a04;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge-rejected {
   background: #fee2e2;
   color: #dc2626;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.badge-completed {
+.badge-closed {
   background: #f3f4f6;
-  color: #6b7280;
+  color: #4b5563;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.badge-interview { 
-  background: #f3e8ff; 
-  color: #7c3aed; 
+.badge-interview {
+  background: #f3e8ff;
+  color: #7c3aed;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .empty {
   text-align: center;
   color: #9ca3af;
-  font-size: 13px;
-  padding: 26px 0;
+  font-size: 14px;
+  padding: 35px 0;
 }
 
 </style>

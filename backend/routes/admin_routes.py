@@ -3,6 +3,7 @@ from flask_security import auth_required, roles_required, current_user
 from user_datastore import user_datastore 
 from database import db 
 from models import User, Role, StudentProfile, CompanyProfile, PlacementDrive, Application
+from extensions import cache 
 
 admin_bp = Blueprint("admin_bp", __name__)
 

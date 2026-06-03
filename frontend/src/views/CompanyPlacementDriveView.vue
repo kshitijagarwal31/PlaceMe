@@ -6,6 +6,7 @@
         <h1>Placement Drives</h1>
         <p>All your posted placement drives</p>
       </div>
+
       <input
         v-model="search"
         class="search-input"
@@ -14,10 +15,11 @@
       />
     </div>
 
-    <div v-if="loading" class="empty" style="padding: 60px 0;">
+    <div v-if="loading" class="loading">
       Loading drives...
     </div>
 
+    <!-- TABLE -->
     <div v-else class="table-box">
       <table>
         <thead>
@@ -31,24 +33,27 @@
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr v-for="(drive, index) in filteredDrives" :key="drive.id">
+          <tr
+            v-for="(drive, index) in filteredDrives"
+            :key="drive.id"
+          >
             <td>{{ index + 1 }}</td>
             <td>{{ drive.job_title }}</td>
             <td>{{ drive.start_date }}</td>
             <td>{{ drive.end_date }}</td>
-            <td>{{ drive.salary || '—' }}</td>
+            <td>{{ drive.salary || "—" }}</td>
             <td>
-              <span :class="
-                drive.status === 'Active'   ? 'badge-active'   :
-                drive.status === 'Pending'  ? 'badge-pending'  :
-                drive.status === 'Rejected' ? 'badge-rejected' :
-                'badge-completed'
-              ">{{ drive.status }}</span>
+              <span :class="getStatusClass(drive.status)">
+                {{ drive.status }}
+              </span>
             </td>
             <td>
               <div class="actions">
-                <button class="btn-view" @click="viewDetail(drive)">View Detail</button>
+                <button class="btn-view" @click="viewDetail(drive)">
+                  View Detail
+                </button>
               </div>
             </td>
           </tr>
@@ -60,61 +65,80 @@
       </div>
     </div>
 
-    <div v-if="selectedDrive" class="modal-overlay" @click.self="selectedDrive = null">
+    <!-- MODAL -->
+    <div
+      v-if="selectedDrive"
+      class="modal-overlay"
+      @click.self="closeModal"
+    >
       <div class="modal">
 
         <div class="modal-header">
           <h3>Drive Detail</h3>
-          <button class="btn-close" @click="selectedDrive = null">✕</button>
+          <button class="btn-close" @click="closeModal">✕</button>
         </div>
 
-        <div v-if="modalLoading" class="empty" style="padding: 40px 0;">
+        <div v-if="modalLoading" class="loading-modal">
           Loading detail...
         </div>
 
         <div v-else>
 
           <div class="detail-top">
-            <div class="avatar-lg">{{ selectedDrive.job_title ? selectedDrive.job_title.charAt(0) : '?' }}</div>
-            <div>
-              <h4>{{ selectedDrive.job_title }}</h4>
-              <p>{{ selectedDrive.salary || 'Package not mentioned' }}</p>
+            <div class="avatar-lg">
+              {{ selectedDrive.job_title?.charAt(0) || "?" }}
             </div>
-            <span :class="
-              selectedDrive.status === 'Active'   ? 'badge-active'   :
-              selectedDrive.status === 'Pending'  ? 'badge-pending'  :
-              selectedDrive.status === 'Rejected' ? 'badge-rejected' :
-              'badge-completed'
-            ">{{ selectedDrive.status }}</span>
+
+            <div class="detail-top-text">
+              <h4>{{ selectedDrive.job_title }}</h4>
+              <p>{{ selectedDrive.salary || "Package not mentioned" }}</p>
+            </div>
+
+            <span :class="getStatusClass(selectedDrive.status)">
+              {{ selectedDrive.status }}
+            </span>
           </div>
 
           <div class="detail-rows">
+
             <div class="detail-row">
               <span class="detail-label">Role</span>
-              <span class="detail-value">{{ selectedDrive.job_title }}</span>
+              <span class="detail-value">{{ selectedDrive.job_title || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Package</span>
-              <span class="detail-value">{{ selectedDrive.salary || '—' }}</span>
+              <span class="detail-value">{{ selectedDrive.salary || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Start Date</span>
-              <span class="detail-value">{{ selectedDrive.start_date }}</span>
+              <span class="detail-value">{{ selectedDrive.start_date || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Last Date</span>
-              <span class="detail-value">{{ selectedDrive.end_date }}</span>
+              <span class="detail-value">{{ selectedDrive.end_date || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Skills Required</span>
-              <span class="detail-value">{{ selectedDrive.skills_required || '—' }}</span>
+              <span class="detail-value">{{ selectedDrive.skills_required || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Description</span>
-              <span class="detail-value">{{ selectedDrive.description || '—' }}</span>
+              <span class="detail-value">{{ selectedDrive.description || "—" }}</span>
             </div>
+
           </div>
-          
+
+          <div class="modal-footer">
+            <button class="btn-close-modal" @click="closeModal">
+              Close
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
@@ -130,11 +154,24 @@ export default {
 
   data() {
     return {
-      loading:       true,
-      modalLoading:  false,
-      search:        "",
+      loading: true,
+      modalLoading: false,
+      search: "",
       selectedDrive: null,
-      drives:        [],
+      drives: []
+    }
+  },
+
+  computed: {
+    filteredDrives() {
+      const q = this.search.toLowerCase()
+
+      return this.drives.filter((drive) => {
+        return (
+          drive.job_title.toLowerCase().includes(q) ||
+          drive.status.toLowerCase().includes(q)
+        )
+      })
     }
   },
 
@@ -142,30 +179,31 @@ export default {
     await this.fetchDrives()
   },
 
-  computed: {
-    filteredDrives() {
-      const q = this.search.toLowerCase()
-      return this.drives.filter(d =>
-        d.job_title.toLowerCase().includes(q) ||
-        d.status.toLowerCase().includes(q)
-      )
-    }
-  },
-
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+          "Authentication-Token": localStorage.getItem("token")
+        }
       }
+    },
+
+    getStatusClass(status) {
+      if (status === "Active") return "badge-active"
+      if (status === "Pending") return "badge-pending"
+      if (status === "Rejected") return "badge-rejected"
+      if (status === "Closed") return "badge-closed"
+      return "badge-closed"
     },
 
     async fetchDrives() {
       this.loading = true
+
       try {
-        const res = await axios.get("http://localhost:5000/company/my_drives", this.getHeaders())
+        const res = await axios.get(
+          "http://localhost:5000/company/my_drives",
+          this.getHeaders()
+        )
         this.drives = res.data.drives || []
       } catch (err) {
         console.error("Drives load failed:", err)
@@ -176,56 +214,56 @@ export default {
 
     async viewDetail(drive) {
       this.selectedDrive = drive
-      this.modalLoading  = true
+      this.modalLoading = true
+
       try {
-        const res = await axios.get(`http://localhost:5000/company/drive_detail/${drive.id}`, this.getHeaders())
+        const res = await axios.get(
+          `http://localhost:5000/company/drive_detail/${drive.id}`,
+          this.getHeaders()
+        )
         this.selectedDrive = res.data
       } catch (err) {
         console.error("Drive detail load failed:", err)
       } finally {
         this.modalLoading = false
       }
-    }
+    },
 
+    closeModal() {
+      this.selectedDrive = null
+    }
   }
 }
 </script>
 
 <style scoped>
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 27px;
+  margin-bottom: 26px;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 16px;
 }
 
 .topbar h1 {
-  font-size: 30.5px;
+  font-size: 30px;
   color: #111827;
   margin-bottom: 3px;
 }
 
 .topbar p {
   color: #6b7280;
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 .search-input {
+  width: 240px;
   padding: 10px 13px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
   font-size: 13px;
-  color: #111827;
-  width: 255px;
   outline: none;
   transition: 0.2s;
   background: white;
@@ -235,10 +273,24 @@ export default {
   border-color: #2563eb;
 }
 
+.loading {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 60px 0;
+}
+
+.loading-modal {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 40px 0;
+}
+
 .table-box {
   background: white;
-  border-radius: 18px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
@@ -278,7 +330,7 @@ tr:hover td {
 
 .actions {
   display: flex;
-  gap: 9px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -286,9 +338,9 @@ tr:hover td {
   background: #eff6ff;
   color: #2563eb;
   border: none;
-  padding: 7px 13px;
-  border-radius: 8px;
-  font-size: 12.5px;
+  padding: 7px 12px;
+  border-radius: 7px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.2s;
@@ -301,36 +353,36 @@ tr:hover td {
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
-  padding: 4px 11px;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .badge-pending {
   background: #fef9c3;
   color: #ca8a04;
-  padding: 4px 11px;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .badge-rejected {
   background: #fee2e2;
   color: #dc2626;
-  padding: 4px 11px;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-.badge-completed {
+.badge-closed {
   background: #f3f4f6;
-  color: #6b7280;
-  padding: 4px 11px;
+  color: #4b5563;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -338,7 +390,7 @@ tr:hover td {
   text-align: center;
   color: #9ca3af;
   font-size: 14px;
-  padding: 36px 0;
+  padding: 35px 0;
 }
 
 .modal-overlay {
@@ -353,12 +405,12 @@ tr:hover td {
 
 .modal {
   background: white;
-  border-radius: 16px;
-  width: 558px;
+  border-radius: 14px;
+  width: 560px;
   max-width: 90%;
-  max-height: 85vh;
+  max-height: 82vh;
   overflow-y: auto;
-  padding: 25px;
+  padding: 24px;
 }
 
 .modal-header {
@@ -375,7 +427,7 @@ tr:hover td {
 }
 
 .modal-header h3 {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
 }
@@ -383,8 +435,8 @@ tr:hover td {
 .btn-close {
   background: #f3f4f6;
   border: none;
-  width: 29px;
-  height: 29px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   font-size: 13px;
   cursor: pointer;
@@ -394,32 +446,36 @@ tr:hover td {
 .detail-top {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   margin-bottom: 18px;
   padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
 }
 
+.detail-top-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .avatar-lg {
-  width: 47px;
-  height: 47px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .detail-top h4 {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 4px;
-  flex: 1;
+  margin-bottom: 3px;
 }
 
 .detail-top p {
@@ -430,8 +486,8 @@ tr:hover td {
 .detail-rows {
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  margin-bottom: 25px;
+  gap: 8px;
+  margin-bottom: 22px;
 }
 
 .detail-row {
@@ -439,7 +495,7 @@ tr:hover td {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  padding-bottom: 9px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -455,105 +511,25 @@ tr:hover td {
   word-break: break-word;
 }
 
-.app-section {
-  margin-top: 4px;
-}
-
-.app-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 13px;
+.modal-footer {
   display: flex;
-  align-items: center;
-  gap: 7px;
+  justify-content: flex-end;
 }
 
-.app-count {
-  background: #eff6ff;
-  color: #2563eb;
-  padding: 2px 9px;
-  border-radius: 18px;
+.btn-close-modal {
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.app-empty {
-  text-align: center;
-  color: #9ca3af;
-  font-size: 13px;
-  padding: 18px 0;
-}
-
-.app-table-box {
-  border-radius: 11px;
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-}
-
-.app-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.app-table thead {
-  background: #f9fafb;
-}
-
-.app-table th {
-  padding: 11px 14px;
-  text-align: left;
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 600;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.app-table td {
-  padding: 11px 14px;
-  font-size: 13px;
-  color: #111827;
-  border-bottom: 1px solid #f3f4f6;
-  font-weight: 500;
-}
-
-.app-table tr:last-child td {
-  border-bottom: none;
-}
-
-.app-table tr:hover td {
-  background: #f9fafb;
-}
-
-.status-upcoming,
-.status-ongoing,
-.status-completed,
-.status-rejected {
-  padding: 4px 9px;
-  border-radius: 18px;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.status-upcoming {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.status-ongoing {
-  background: #fef9c3;
-  color: #ca8a04;
-}
-
-.status-completed {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+.btn-close-modal:hover {
+  background: #e5e7eb;
 }
 
 </style>

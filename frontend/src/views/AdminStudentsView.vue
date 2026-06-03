@@ -6,6 +6,7 @@
         <h1>Students</h1>
         <p>All registered students</p>
       </div>
+
       <input
         v-model="search"
         class="search-input"
@@ -14,6 +15,7 @@
       />
     </div>
 
+    <!-- TABLE -->
     <div class="table-box">
       <table>
         <thead>
@@ -25,29 +27,39 @@
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr v-for="(student, index) in filteredStudents" :key="student.id">
+          <tr
+            v-for="(student, index) in filteredStudents"
+            :key="student.id"
+          >
             <td>{{ index + 1 }}</td>
             <td>{{ student.name }}</td>
             <td>{{ student.email }}</td>
             <td>
-              <span :class="student.is_active ? 'badge-active' : 'badge-blacklisted'">
-                {{ student.is_active ? 'Active' : 'Blacklisted' }}
+              <span :class="getStatusClass(student.is_active)">
+                {{ student.is_active ? "Active" : "Blacklisted" }}
               </span>
             </td>
             <td>
               <div class="actions">
-                <button class="btn-view" @click="viewProfile(student)">View Profile</button>
+                <button class="btn-view" @click="viewProfile(student)">
+                  View Profile
+                </button>
                 <button
                   v-if="student.is_active"
                   class="btn-blacklist"
                   @click="blacklistStudent(student)"
-                >Blacklist</button>
+                >
+                  Blacklist
+                </button>
                 <button
                   v-else
-                  class="btn-view"
+                  class="btn-unblacklist"
                   @click="unblacklistStudent(student)"
-                >Unblacklist</button>
+                >
+                  Unblacklist
+                </button>
               </div>
             </td>
           </tr>
@@ -59,7 +71,12 @@
       </div>
     </div>
 
-    <div v-if="selectedStudent" class="modal-overlay" @click.self="selectedStudent = null">
+    <!-- MODAL -->
+    <div
+      v-if="selectedStudent"
+      class="modal-overlay"
+      @click.self="selectedStudent = null"
+    >
       <div class="modal">
 
         <div class="modal-header">
@@ -68,45 +85,69 @@
         </div>
 
         <div class="detail-top">
-          <div class="avatar-lg">{{ selectedStudent.name.charAt(0) }}</div>
+          <div class="avatar-lg">
+            {{ selectedStudent.name?.charAt(0) || "?" }}
+          </div>
+
           <div>
             <h4>{{ selectedStudent.name }}</h4>
             <p>{{ selectedStudent.college }} · CGPA {{ selectedStudent.cgpa }}</p>
           </div>
-          <span :class="selectedStudent.is_active ? 'badge-active' : 'badge-blacklisted'">
-            {{ selectedStudent.is_active ? 'Active' : 'Blacklisted' }}
+
+          <span :class="getStatusClass(selectedStudent.is_active)">
+            {{ selectedStudent.is_active ? "Active" : "Blacklisted" }}
           </span>
         </div>
 
         <div class="detail-rows">
+
           <div class="detail-row">
             <span class="detail-label">Name</span>
-            <span class="detail-value">{{ selectedStudent.name }}</span>
+            <span class="detail-value">{{ selectedStudent.name || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Username</span>
-            <span class="detail-value">{{ selectedStudent.username }}</span>
+            <span class="detail-value">{{ selectedStudent.username || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Email</span>
-            <span class="detail-value">{{ selectedStudent.email }}</span>
+            <span class="detail-value">{{ selectedStudent.email || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">CGPA</span>
-            <span class="detail-value">{{ selectedStudent.cgpa }}</span>
+            <span class="detail-value">{{ selectedStudent.cgpa || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">College</span>
-            <span class="detail-value">{{ selectedStudent.college }}</span>
+            <span class="detail-value">{{ selectedStudent.college || "—" }}</span>
           </div>
+
           <div class="detail-row">
             <span class="detail-label">Skills</span>
-            <span class="detail-value">{{ selectedStudent.skills }}</span>
+            <span class="detail-value">{{ selectedStudent.skills || "—" }}</span>
           </div>
-          <div class="detail-row">
+
+          <div class="detail-row" v-if="selectedStudent.resume">
             <span class="detail-label">Resume</span>
-            <a :href="selectedStudent.resume" target="_blank" class="resume-link">📄 View Resume</a>
+            <a
+              :href="selectedStudent.resume"
+              target="_blank"
+              class="resume-link"
+            >
+              View Resume
+            </a>
           </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn-close-modal" @click="selectedStudent = null">
+            Close
+          </button>
         </div>
 
       </div>
@@ -125,52 +166,69 @@ export default {
     return {
       search: "",
       selectedStudent: null,
-      students: [],
-      loading: false
+      students: []
     }
-  },
-
-  async mounted() {
-    const token = localStorage.getItem("token")
-    const res = await axios.get("http://localhost:5000/admin/students", {
-      headers: { "Authentication-Token": token }
-    })
-    this.students = res.data.students
   },
 
   computed: {
     filteredStudents() {
       const q = this.search.toLowerCase()
-      return this.students.filter(s =>
-        s.name.toLowerCase().includes(q) ||
-        s.email.toLowerCase().includes(q) ||
-        (s.is_active ? 'active' : 'blacklisted').includes(q)
-      )
-    },
-    studentApplications() {
-      if (!this.selectedStudent) return []
-      return this.selectedStudent.applications || []
+
+      return this.students.filter((student) => {
+        const statusText = student.is_active ? "active" : "blacklisted"
+
+        return (
+          student.name.toLowerCase().includes(q) ||
+          student.email.toLowerCase().includes(q) ||
+          statusText.includes(q)
+        )
+      })
     }
   },
 
+  async mounted() {
+    const token = localStorage.getItem("token")
+
+    const res = await axios.get("http://localhost:5000/admin/students", {
+      headers: { "Authentication-Token": token }
+    })
+
+    this.students = res.data.students || []
+  },
+
   methods: {
+    getHeaders() {
+      return {
+        headers: {
+          "Authentication-Token": localStorage.getItem("token")
+        }
+      }
+    },
+
+    getStatusClass(isActive) {
+      if (isActive) return "badge-active"
+      return "badge-blacklisted"
+    },
+
     viewProfile(student) {
       this.selectedStudent = student
     },
 
     async blacklistStudent(student) {
-      const token = localStorage.getItem("token")
-      await axios.post(`http://localhost:5000/admin/student/blacklist/${student.id}`, {}, {
-        headers: { "Authentication-Token": token }
-      })
+      await axios.post(
+        `http://localhost:5000/admin/student/blacklist/${student.id}`,
+        {},
+        this.getHeaders()
+      )
       student.is_active = false
     },
 
     async unblacklistStudent(student) {
-      const token = localStorage.getItem("token")
-      await axios.post(`http://localhost:5000/admin/student/unblacklist/${student.id}`, {}, {
-        headers: { "Authentication-Token": token }
-      })
+      await axios.post(
+        `http://localhost:5000/admin/student/unblacklist/${student.id}`,
+        {},
+        this.getHeaders()
+      )
       student.is_active = true
     }
   }
@@ -183,27 +241,28 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 27px;
+  margin-bottom: 26px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
 .topbar h1 {
-  font-size: 31px;
+  font-size: 30px;
   color: #111827;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .topbar p {
   color: #6b7280;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .search-input {
+  width: 240px;
   padding: 10px 13px;
   border: 1px solid #e5e7eb;
-  border-radius: 9px;
+  border-radius: 10px;
   font-size: 13px;
-  color: #111827;
-  width: 252px;
   outline: none;
   transition: 0.2s;
   background: white;
@@ -215,8 +274,8 @@ export default {
 
 .table-box {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 13px rgba(0, 0, 0, 0.05);
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
 
@@ -256,15 +315,16 @@ tr:hover td {
 
 .actions {
   display: flex;
-  gap: 9px;
+  gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .btn-view {
   background: #eff6ff;
   color: #2563eb;
   border: none;
-  padding: 7px 13px;
+  padding: 7px 12px;
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
@@ -280,7 +340,7 @@ tr:hover td {
   background: #fee2e2;
   color: #dc2626;
   border: none;
-  padding: 7px 13px;
+  padding: 7px 12px;
   border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
@@ -292,21 +352,37 @@ tr:hover td {
   background: #fecaca;
 }
 
+.btn-unblacklist {
+  background: #eff6ff;
+  color: #2563eb;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-unblacklist:hover {
+  background: #dbeafe;
+}
+
 .badge-active {
   background: #dcfce7;
   color: #16a34a;
-  padding: 4px 11px;
-  border-radius: 18px;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .badge-blacklisted {
   background: #fee2e2;
   color: #dc2626;
-  padding: 4px 11px;
-  border-radius: 18px;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -314,7 +390,7 @@ tr:hover td {
   text-align: center;
   color: #9ca3af;
   font-size: 14px;
-  padding: 36px 0;
+  padding: 35px 0;
 }
 
 .modal-overlay {
@@ -329,12 +405,12 @@ tr:hover td {
 
 .modal {
   background: white;
-  border-radius: 16px;
+  border-radius: 14px;
   width: 560px;
   max-width: 90%;
-  max-height: 85vh;
+  max-height: 82vh;
   overflow-y: auto;
-  padding: 25px;
+  padding: 24px;
 }
 
 .modal-header {
@@ -351,7 +427,7 @@ tr:hover td {
 }
 
 .modal-header h3 {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
 }
@@ -359,8 +435,8 @@ tr:hover td {
 .btn-close {
   background: #f3f4f6;
   border: none;
-  width: 29px;
-  height: 29px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   font-size: 13px;
   cursor: pointer;
@@ -370,28 +446,28 @@ tr:hover td {
 .detail-top {
   display: flex;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
   margin-bottom: 18px;
   padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
 }
 
 .avatar-lg {
-  width: 47px;
-  height: 47px;
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
   background: #eff6ff;
   color: #2563eb;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
+  font-size: 19px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
 .detail-top h4 {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: #111827;
   margin-bottom: 3px;
@@ -406,8 +482,8 @@ tr:hover td {
 .detail-rows {
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  margin-bottom: 25px;
+  gap: 8px;
+  margin-bottom: 22px;
 }
 
 .detail-row {
@@ -415,7 +491,7 @@ tr:hover td {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  padding-bottom: 9px;
+  padding-bottom: 8px;
   border-bottom: 1px solid #f3f4f6;
 }
 
@@ -442,102 +518,25 @@ tr:hover td {
   text-decoration: underline;
 }
 
-.app-section {
-  margin-top: 4px;
-}
-
-.app-section-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 13px;
+.modal-footer {
   display: flex;
-  align-items: center;
-  gap: 7px;
+  justify-content: flex-end;
 }
 
-.app-count {
-  background: #eff6ff;
-  color: #2563eb;
-  padding: 2px 9px;
-  border-radius: 18px;
+.btn-close-modal {
+  background: #f3f4f6;
+  color: #374151;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 7px;
   font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.app-empty {
-  text-align: center;
-  color: #9ca3af;
-  font-size: 13px;
-  padding: 18px 0;
-}
-
-.app-table-box {
-  border-radius: 11px;
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-}
-
-.app-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.app-table thead {
-  background: #f9fafb;
-}
-
-.app-table th {
-  padding: 11px 14px;
-  text-align: left;
-  font-size: 12px;
-  color: #6b7280;
-  font-weight: 600;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.app-table td {
-  padding: 11px 14px;
-  font-size: 13px;
-  color: #111827;
-  border-bottom: 1px solid #f3f4f6;
-  font-weight: 500;
-}
-
-.app-table tr:last-child td {
-  border-bottom: none;
-}
-
-.app-table tr:hover td {
-  background: #f9fafb;
-}
-
-.status-badge {
-  padding: 4px 9px;
-  border-radius: 18px;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.status-pending {
-  background: #fef9c3;
-  color: #ca8a04;
-}
-
-.status-shortlisted {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.status-selected {
-  background: #dbeafe;
-  color: #2563eb;
-}
-
-.status-rejected {
-  background: #fee2e2;
-  color: #dc2626;
+.btn-close-modal:hover {
+  background: #e5e7eb;
 }
 
 </style>

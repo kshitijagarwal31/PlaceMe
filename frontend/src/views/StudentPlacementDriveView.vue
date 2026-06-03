@@ -6,6 +6,7 @@
         <h1>Placement Drives</h1>
         <p>All available placement drives</p>
       </div>
+
       <input
         v-model="search"
         class="search-input"
@@ -14,10 +15,11 @@
       />
     </div>
 
-    <div v-if="loading" class="empty" style="padding: 60px 0;">
+    <div v-if="loading" class="loading">
       Loading drives...
     </div>
 
+    <!-- TABLE -->
     <div v-else class="table-box">
       <table>
         <thead>
@@ -31,30 +33,34 @@
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr v-for="(drive, index) in filteredDrives" :key="drive.id">
+          <tr
+            v-for="(drive, index) in filteredDrives"
+            :key="drive.id"
+          >
             <td>{{ index + 1 }}</td>
             <td>{{ drive.company }}</td>
             <td>{{ drive.job_title }}</td>
             <td>{{ drive.end_date }}</td>
-            <td>{{ drive.salary || '—' }}</td>
+            <td>{{ drive.salary || "—" }}</td>
             <td>
-              <span :class="
-                drive.status === 'Active'  ? 'badge-ongoing'   :
-                drive.status === 'Pending' ? 'badge-upcoming'  :
-                'badge-completed'
-              ">{{ drive.status }}</span>
+              <span :class="getStatusClass(drive.status)">
+                {{ drive.status }}
+              </span>
             </td>
             <td>
               <div class="actions">
-                <button class="btn-view" @click="viewDetail(drive)">View Details</button>
+                <button class="btn-view" @click="viewDetail(drive)">
+                  View Details
+                </button>
                 <button
                   class="btn-apply"
-                  @click="applyDrive(drive.id)"
-                  :disabled="drive.already_applied"
                   :class="{ 'btn-applied': drive.already_applied }"
+                  :disabled="drive.already_applied"
+                  @click="applyDrive(drive.id)"
                 >
-                  {{ drive.already_applied ? 'Applied ✓' : 'Apply' }}
+                  {{ drive.already_applied ? "Applied" : "Apply" }}
                 </button>
               </div>
             </td>
@@ -67,76 +73,94 @@
       </div>
     </div>
 
-    <div v-if="selectedDrive" class="modal-overlay" @click.self="selectedDrive = null">
+    <!-- MODAL -->
+    <div
+      v-if="selectedDrive"
+      class="modal-overlay"
+      @click.self="closeModal"
+    >
       <div class="modal">
 
         <div class="modal-header">
           <h3>Drive Details</h3>
-          <button class="btn-close" @click="selectedDrive = null">✕</button>
+          <button class="btn-close" @click="closeModal">✕</button>
         </div>
 
-        <div v-if="modalLoading" class="empty" style="padding: 40px 0;">
+        <div v-if="modalLoading" class="loading-modal">
           Loading detail...
         </div>
 
         <div v-else>
+
           <div class="detail-top">
-            <div class="avatar-lg">{{ selectedDrive.company.charAt(0) }}</div>
-            <div>
-              <h4>{{ selectedDrive.company }}</h4>
-              <p>{{ selectedDrive.job_title }} · {{ selectedDrive.salary || '—' }}</p>
+            <div class="avatar-lg">
+              {{ selectedDrive.company?.charAt(0) || "?" }}
             </div>
-            <span :class="
-              selectedDrive.status === 'Active'  ? 'badge-ongoing'  :
-              selectedDrive.status === 'Pending' ? 'badge-upcoming' :
-              'badge-completed'
-            ">{{ selectedDrive.status }}</span>
+
+            <div class="detail-top-text">
+              <h4>{{ selectedDrive.company }}</h4>
+              <p>{{ selectedDrive.job_title }} · {{ selectedDrive.salary || "—" }}</p>
+            </div>
+
+            <span :class="getStatusClass(selectedDrive.status)">
+              {{ selectedDrive.status }}
+            </span>
           </div>
 
           <div class="detail-rows">
+
             <div class="detail-row">
               <span class="detail-label">Company</span>
-              <span class="detail-value">{{ selectedDrive.company }}</span>
+              <span class="detail-value">{{ selectedDrive.company || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Job Title</span>
-              <span class="detail-value">{{ selectedDrive.job_title }}</span>
+              <span class="detail-value">{{ selectedDrive.job_title || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Salary</span>
-              <span class="detail-value">{{ selectedDrive.salary || '—' }}</span>
+              <span class="detail-value">{{ selectedDrive.salary || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Start Date</span>
-              <span class="detail-value">{{ selectedDrive.start_date }}</span>
+              <span class="detail-value">{{ selectedDrive.start_date || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Last Date</span>
-              <span class="detail-value">{{ selectedDrive.end_date }}</span>
+              <span class="detail-value">{{ selectedDrive.end_date || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Skills Required</span>
-              <span class="detail-value">{{ selectedDrive.skills_required || '—' }}</span>
+              <span class="detail-value">{{ selectedDrive.skills_required || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Description</span>
-              <span class="detail-value">{{ selectedDrive.description || '—' }}</span>
+              <span class="detail-value">{{ selectedDrive.description || "—" }}</span>
             </div>
+
           </div>
 
           <div class="modal-footer">
-            <button class="btn-close-modal" @click="selectedDrive = null">Close</button>
+            <button class="btn-close-modal" @click="closeModal">
+              Close
+            </button>
             <button
               class="btn-apply-modal"
-              @click="applyDrive(selectedDrive.id)"
-              :disabled="selectedDrive.already_applied"
               :class="{ 'btn-applied': selectedDrive.already_applied }"
+              :disabled="selectedDrive.already_applied"
+              @click="applyDrive(selectedDrive.id)"
             >
-              {{ selectedDrive.already_applied ? 'Already Applied ✓' : 'Apply Now' }}
+              {{ selectedDrive.already_applied ? "Already Applied" : "Apply Now" }}
             </button>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
 
@@ -151,11 +175,25 @@ export default {
 
   data() {
     return {
-      loading:       true,
-      modalLoading:  false,
-      search:        "",
+      loading: true,
+      modalLoading: false,
+      search: "",
       selectedDrive: null,
-      drives:        [],
+      drives: []
+    }
+  },
+
+  computed: {
+    filteredDrives() {
+      const q = this.search.toLowerCase()
+
+      return this.drives.filter((drive) => {
+        return (
+          drive.company.toLowerCase().includes(q)   ||
+          drive.job_title.toLowerCase().includes(q) ||
+          drive.status.toLowerCase().includes(q)
+        )
+      })
     }
   },
 
@@ -163,30 +201,30 @@ export default {
     await this.fetchDrives()
   },
 
-  computed: {
-    filteredDrives() {
-      const q = this.search.toLowerCase()
-      return this.drives.filter(drive =>
-        drive.company.toLowerCase().includes(q) ||
-        drive.job_title.toLowerCase().includes(q)
-      )
-    }
-  },
-
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+          "Authentication-Token": localStorage.getItem("token")
+        }
       }
+    },
+
+    getStatusClass(status) {
+      if (status === "Active") return "badge-active"
+      if (status === "Pending") return "badge-pending"
+      if (status === "Closed") return "badge-closed"
+      return "badge-pending"
     },
 
     async fetchDrives() {
       this.loading = true
+
       try {
-        const res = await axios.get("http://localhost:5000/student/all_drives", this.getHeaders())
+        const res = await axios.get(
+          "http://localhost:5000/student/all_drives",
+          this.getHeaders()
+        )
         this.drives = res.data.drives || []
       } catch (err) {
         console.error("Drives load failed:", err)
@@ -197,9 +235,13 @@ export default {
 
     async viewDetail(drive) {
       this.selectedDrive = drive
-      this.modalLoading  = true
+      this.modalLoading = true
+
       try {
-        const res = await axios.get(`http://localhost:5000/student/drive_detail/${drive.id}`, this.getHeaders())
+        const res = await axios.get(
+          `http://localhost:5000/student/drive_detail/${drive.id}`,
+          this.getHeaders()
+        )
         this.selectedDrive = res.data
       } catch (err) {
         console.error("Drive detail load failed:", err)
@@ -210,20 +252,27 @@ export default {
 
     async applyDrive(driveId) {
       try {
-        await axios.post(`http://localhost:5000/student/apply/${driveId}`, {}, this.getHeaders())
-        alert("Applied successfully! ✅")
+        await axios.post(
+          `http://localhost:5000/student/apply/${driveId}`,
+          {},
+          this.getHeaders()
+        )
+        alert("Applied successfully!")
 
-        const drive = this.drives.find(d => d.id === driveId)
+        const drive = this.drives.find((item) => item.id === driveId)
         if (drive) drive.already_applied = true
 
         if (this.selectedDrive && this.selectedDrive.id === driveId) {
           this.selectedDrive.already_applied = true
         }
-
       } catch (err) {
         const msg = err.response?.data?.message || "Something went wrong!"
         alert(msg)
       }
+    },
+
+    closeModal() {
+      this.selectedDrive = null
     }
   }
 }
@@ -264,6 +313,20 @@ export default {
 
 .search-input:focus {
   border-color: #2563eb;
+}
+
+.loading {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 60px 0;
+}
+
+.loading-modal {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 40px 0;
 }
 
 .table-box {
@@ -311,6 +374,7 @@ tr:hover td {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .btn-view,
@@ -348,28 +412,31 @@ tr:hover td {
   cursor: not-allowed !important;
 }
 
-.badge-upcoming,
-.badge-ongoing,
-.badge-completed {
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
+.badge-active {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-.badge-upcoming {
-  background: #dbeafe;
-  color: #2563eb;
+.badge-pending {
+  background: #fef9c3;
+  color: #ca8a04;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.badge-ongoing {
-  background: #dcfce7;
-  color: #16a34a;
-}
-
-.badge-completed {
-  background: #dcfce7;
-  color: #16a34a;
+.badge-closed {
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .empty {
@@ -426,6 +493,7 @@ tr:hover td {
   background: #f3f4f6;
   cursor: pointer;
   color: #374151;
+  font-size: 13px;
 }
 
 .detail-top {
@@ -435,6 +503,11 @@ tr:hover td {
   margin-bottom: 18px;
   padding-bottom: 14px;
   border-bottom: 1px solid #f3f4f6;
+}
+
+.detail-top-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .avatar-lg {
@@ -448,6 +521,7 @@ tr:hover td {
   align-items: center;
   font-size: 19px;
   font-weight: 700;
+  flex-shrink: 0;
 }
 
 .detail-top h4 {
@@ -494,6 +568,7 @@ tr:hover td {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .btn-close-modal,
@@ -504,6 +579,7 @@ tr:hover td {
   font-weight: 600;
   border: none;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .btn-close-modal {

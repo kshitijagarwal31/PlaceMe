@@ -13,3 +13,7 @@ class LocalDevelopmentConfig(Config):
     WTF_CSRF_ENABLED = False
     SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"
     
+    CACHE_TYPE            = "RedisCache"
+    CACHE_REDIS_URL       = "redis://localhost:6379/0"
+    CACHE_DEFAULT_TIMEOUT = 300
+    

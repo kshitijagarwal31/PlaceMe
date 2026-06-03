@@ -4,8 +4,9 @@
     <div class="topbar">
       <div>
         <h1>My Applications</h1>
-        <p>Track all your placement applications • {{ applications.length }} total</p>
+        <p>Track all your placement applications · {{ applications.length }} total</p>
       </div>
+
       <input
         v-model="search"
         class="search-input"
@@ -14,10 +15,11 @@
       />
     </div>
 
-    <div v-if="loading" class="empty" style="padding: 60px 0;">
+    <div v-if="loading" class="loading">
       Loading applications...
     </div>
 
+    <!-- TABLE -->
     <div v-else class="table-box">
       <table>
         <thead>
@@ -31,20 +33,26 @@
             <th>Action</th>
           </tr>
         </thead>
+
         <tbody>
-          <tr v-for="(app, index) in filteredApplications" :key="app.id">
+          <tr
+            v-for="(application, index) in filteredApplications"
+            :key="application.id"
+          >
             <td>{{ index + 1 }}</td>
-            <td>{{ app.company }}</td>
-            <td>{{ app.drive }}</td>
-            <td>{{ app.date }}</td>
-            <td>{{ app.package || '—' }}</td>
+            <td>{{ application.company }}</td>
+            <td>{{ application.drive }}</td>
+            <td>{{ application.date }}</td>
+            <td>{{ application.package || "—" }}</td>
             <td>
-              <span :class="getStatusClass(app.status)">
-                {{ app.status }}
+              <span :class="getStatusClass(application.status)">
+                {{ application.status }}
               </span>
             </td>
             <td>
-              <button class="btn-view" @click="viewDetail(app)">View Details</button>
+              <button class="btn-view" @click="viewDetail(application)">
+                View Details
+              </button>
             </td>
           </tr>
         </tbody>
@@ -55,72 +63,87 @@
       </div>
     </div>
 
-    <div v-if="selectedApp" class="modal-overlay" @click.self="selectedApp = null">
+    <!-- MODAL -->
+    <div
+      v-if="selectedApp"
+      class="modal-overlay"
+      @click.self="closeModal"
+    >
       <div class="modal">
 
         <div class="modal-header">
           <h3>Application Detail</h3>
-          <button class="btn-close" @click="selectedApp = null">✕</button>
+          <button class="btn-close" @click="closeModal">✕</button>
         </div>
 
-        <div v-if="modalLoading" class="empty" style="padding: 40px 0;">
+        <div v-if="modalLoading" class="loading-modal">
           Loading detail...
         </div>
 
         <div v-else>
+
           <div class="detail-top">
-            <div class="avatar-lg">{{ selectedApp.student_name ? selectedApp.student_name.charAt(0) : '?' }}</div>
-            <div>
+            <div class="avatar-lg">
+              {{ selectedApp.student_name?.charAt(0) || "?" }}
+            </div>
+
+            <div class="detail-top-text">
               <h4>{{ selectedApp.student_name }}</h4>
               <p>{{ selectedApp.company }} · {{ selectedApp.drive }}</p>
             </div>
-            <span :class="getStatusClass(selectedApp.status)">{{ selectedApp.status }}</span>
+
+            <span :class="getStatusClass(selectedApp.status)">
+              {{ selectedApp.status }}
+            </span>
           </div>
 
           <div class="detail-rows">
-            <div class="detail-row">
-              <span class="detail-label">Student Name</span>
-              <span class="detail-value">{{ selectedApp.student_name || '—' }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Email</span>
-              <span class="detail-value">{{ selectedApp.email || '—' }}</span>
-            </div>
+
             <div class="detail-row">
               <span class="detail-label">Company</span>
-              <span class="detail-value">{{ selectedApp.company || '—' }}</span>
+              <span class="detail-value">{{ selectedApp.company || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Role</span>
-              <span class="detail-value">{{ selectedApp.drive || '—' }}</span>
+              <span class="detail-value">{{ selectedApp.drive || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Package</span>
-              <span class="detail-value">{{ selectedApp.package || '—' }}</span>
+              <span class="detail-value">{{ selectedApp.package || "—" }}</span>
             </div>
+
             <div class="detail-row">
               <span class="detail-label">Applied On</span>
-              <span class="detail-value">{{ selectedApp.date || '—' }}</span>
+              <span class="detail-value">{{ selectedApp.date || "—" }}</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">Status</span>
-              <span :class="getStatusClass(selectedApp.status)">{{ selectedApp.status }}</span>
-            </div>
+
             <div class="detail-row">
               <span class="detail-label">Feedback</span>
-              <span class="detail-value">{{ selectedApp.feedback || 'N/A' }}</span>
+              <span class="detail-value">{{ selectedApp.feedback || "N/A" }}</span>
             </div>
+
             <div class="detail-row" v-if="selectedApp.resume">
               <span class="detail-label">Resume</span>
-              <a :href="selectedApp.resume" target="_blank" class="resume-link">📄 View Resume</a>
+              <a
+                :href="selectedApp.resume"
+                target="_blank"
+                class="resume-link"
+              >
+                View Resume
+              </a>
             </div>
+
           </div>
 
           <div class="modal-footer">
-            <button class="btn-close-modal" @click="selectedApp = null">Close</button>
+            <button class="btn-close-modal" @click="closeModal">
+              Close
+            </button>
           </div>
-        </div>
 
+        </div>
       </div>
     </div>
 
@@ -135,11 +158,25 @@ export default {
 
   data() {
     return {
-      loading:      true,
+      loading: true,
       modalLoading: false,
-      search:       "",
-      selectedApp:  null,
-      applications: [],
+      search: "",
+      selectedApp: null,
+      applications: []
+    }
+  },
+
+  computed: {
+    filteredApplications() {
+      const q = this.search.toLowerCase()
+
+      return this.applications.filter((application) => {
+        return (
+          application.company.toLowerCase().includes(q) ||
+          application.drive.toLowerCase().includes(q)   ||
+          application.status.toLowerCase().includes(q)
+        )
+      })
     }
   },
 
@@ -147,39 +184,32 @@ export default {
     await this.fetchApplications()
   },
 
-  computed: {
-    filteredApplications() {
-      const q = this.search.toLowerCase()
-      return this.applications.filter(app =>
-        app.company.toLowerCase().includes(q) ||
-        app.drive.toLowerCase().includes(q)
-      )
-    }
-  },
-
   methods: {
-
     getHeaders() {
       return {
         headers: {
-          "Authentication-Token": localStorage.getItem("token"),
-        },
+          "Authentication-Token": localStorage.getItem("token")
+        }
       }
     },
 
     getStatusClass(status) {
-      if (status === 'Selected')    return 'badge-selected'
-      if (status === 'Shortlisted') return 'badge-shortlisted'
-      if (status === 'Rejected')    return 'badge-rejected'
-      if (status === 'Pending')     return 'badge-pending'
-      if (status === 'Interview Scheduled')  return 'badge-interview'  
-      return 'badge-applied'
+      if (status === "Selected") return "badge-selected"
+      if (status === "Shortlisted") return "badge-shortlisted"
+      if (status === "Rejected") return "badge-rejected"
+      if (status === "Pending") return "badge-pending"
+      if (status === "Interview Scheduled") return "badge-interview"
+      return "badge-pending"
     },
 
     async fetchApplications() {
       this.loading = true
+
       try {
-        const res = await axios.get("http://localhost:5000/student/my_applications", this.getHeaders())
+        const res = await axios.get(
+          "http://localhost:5000/student/my_applications",
+          this.getHeaders()
+        )
         this.applications = res.data.applications || []
       } catch (err) {
         console.error("Applications load failed:", err)
@@ -188,22 +218,31 @@ export default {
       }
     },
 
-    async viewDetail(app) {
-      this.selectedApp  = app
+    async viewDetail(application) {
+      this.selectedApp = application
       this.modalLoading = true
+
       try {
-        const res = await axios.get(`http://localhost:5000/student/application_detail/${app.id}`, this.getHeaders())
-        const d = res.data
+        const res = await axios.get(
+          `http://localhost:5000/student/application_detail/${application.id}`,
+          this.getHeaders()
+        )
+        const data = res.data
+
         this.selectedApp = {
-          ...app,
-          feedback     : d.feedback,
-          resume       : d.resume,
+          ...application,
+          feedback: data.feedback,
+          resume: data.resume
         }
       } catch (err) {
         console.error("Application detail load failed:", err)
       } finally {
         this.modalLoading = false
       }
+    },
+
+    closeModal() {
+      this.selectedApp = null
     }
   }
 }
@@ -244,6 +283,20 @@ export default {
 
 .search-input:focus {
   border-color: #2563eb;
+}
+
+.loading {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 60px 0;
+}
+
+.loading-modal {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 14px;
+  padding: 40px 0;
 }
 
 .table-box {
@@ -303,57 +356,48 @@ tr:hover td {
   background: #dbeafe;
 }
 
-.badge-selected {
-  background: #dbeafe;
-  color: #2563eb;
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
 .badge-pending {
   background: #fef9c3;
   color: #ca8a04;
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-.badge-shortlisted { 
-  background: #dcfce7; 
-  color: #16a34a; 
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
+.badge-shortlisted {
+  background: #dcfce7;
+  color: #16a34a;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-selected {
+  background: #dbeafe;
+  color: #2563eb;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
 .badge-rejected {
   background: #fee2e2;
   color: #dc2626;
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
-.badge-applied {
-  background: #dbeafe;
-  color: #2563eb;
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-interview { 
-  background: #f3e8ff; 
-  color: #7c3aed; 
-  padding: 4px 10px;
-  border-radius: 18px;
-  font-size: 12px;
+.badge-interview {
+  background: #f3e8ff;
+  color: #7c3aed;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
   font-weight: 600;
 }
 
@@ -423,6 +467,11 @@ tr:hover td {
   border-bottom: 1px solid #f3f4f6;
 }
 
+.detail-top-text {
+  flex: 1;
+  min-width: 0;
+}
+
 .avatar-lg {
   width: 46px;
   height: 46px;
@@ -442,7 +491,6 @@ tr:hover td {
   font-weight: 600;
   color: #111827;
   margin-bottom: 3px;
-  flex: 1;
 }
 
 .detail-top p {

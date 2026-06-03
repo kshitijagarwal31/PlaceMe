@@ -3,6 +3,7 @@ from flask_security import auth_required, roles_required, current_user
 from database import db 
 from models import CompanyProfile, PlacementDrive, Application 
 from datetime import datetime 
+from extensions import cache 
 
 company_bp = Blueprint("company_bp", __name__)
 
