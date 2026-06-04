@@ -11,6 +11,7 @@ admin_bp = Blueprint("admin_bp", __name__)
 @admin_bp.route("/admin/dashboard_data", methods=["GET"])
 @auth_required("token")
 @roles_required("admin")
+@cache.cached(key_prefix="admin_dashboard")
 def admin_dashboard_data():
 
     total_students     = User.query.join(User.roles).filter(Role.name == "student").count()
@@ -65,6 +66,7 @@ def admin_dashboard_data():
 @admin_bp.route("/admin/students", methods=["GET"])
 @auth_required("token")
 @roles_required("admin")
+@cache.cached(key_prefix="admin_students")
 def admin_students():
     students = User.query.join(User.roles).filter(Role.name == "student").all()
     students_list = []
@@ -87,6 +89,7 @@ def admin_students():
 @admin_bp.route("/admin/companies", methods=["GET"])
 @auth_required("token")
 @roles_required("admin")
+@cache.cached(key_prefix="admin_companies")
 def admin_companies():
     companies = User.query.join(User.roles).filter(
         Role.name == "company",
@@ -134,6 +137,7 @@ def admin_companies():
 @admin_bp.route("/admin/placement_drives", methods=["GET"])
 @auth_required("token")
 @roles_required("admin")
+@cache.cached(key_prefix="admin_placement_drives")
 def admin_placement_drives():
     active_drives = PlacementDrive.query.filter_by(status="Active").all()
     pending_drives = PlacementDrive.query.filter_by(status="Pending").all()
@@ -162,6 +166,7 @@ def admin_placement_drives():
 @admin_bp.route("/admin/applications", methods=["GET"])
 @auth_required("token")
 @roles_required("admin")
+@cache.cached(key_prefix="admin_applications")
 def admin_applications():
     applications = Application.query.all()
 
@@ -220,6 +225,8 @@ def approve_company(id):
         return {"message": "Company not found"}, 404
     company.is_approved = True
     db.session.commit()    
+    cache.delete("admin_companies")
+    cache.delete("admin_dashboard")
     return {"message": "Company approved successfully"}, 200
 
 
@@ -232,6 +239,8 @@ def reject_company(id):
         return {"message": "Company not found"}, 404
     db.session.delete(company)
     db.session.commit()
+    cache.delete("admin_companies")
+    cache.delete("admin_dashboard")
     return {"message": "Company rejected and deleted"}, 200
 
 
@@ -247,6 +256,7 @@ def blacklist_company(company_id):
     if company:
         company.is_active = False
     db.session.commit()
+    cache.delete("admin_companies")
     return jsonify({"message": "Company blacklisted"})
 
 
@@ -262,6 +272,7 @@ def unblacklist_company(company_id):
     if company:
         company.is_active = True
     db.session.commit()
+    cache.delete("admin_companies")
     return jsonify({"message": "Company unblacklisted"})
 
 
@@ -277,6 +288,7 @@ def blacklist_student(student_id):
     if student:
         student.is_active = False
     db.session.commit()
+    cache.delete("admin_students")
     return jsonify({"message": "Student blacklisted"})
 
 
@@ -292,6 +304,7 @@ def unblacklist_student(student_id):
     if student:
         student.is_active = True
     db.session.commit()
+    cache.delete("admin_students")
     return jsonify({"message": "Student unblacklisted"})
 
 
@@ -305,6 +318,8 @@ def approve_drive(drive_id):
     drive.status = "Active"    
     drive.is_approved = True
     db.session.commit()
+    cache.delete("admin_placement_drives")
+    cache.delete("admin_dashboard")
     return jsonify({"message": "Drive approved"})
 
 
@@ -317,4 +332,6 @@ def reject_drive(drive_id):
         return jsonify({"message": "Drive not found"}), 404
     drive.status = "Rejected"
     db.session.commit()
+    cache.delete("admin_placement_drives")
+    cache.delete("admin_dashboard")
     return jsonify({"message": "Drive rejected"})

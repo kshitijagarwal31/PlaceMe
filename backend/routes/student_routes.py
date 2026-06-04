@@ -139,6 +139,11 @@ def apply_drive(drive_id):
     )
     db.session.add(application)
     db.session.commit()
+    cache.delete(f"student_applications_{current_user.id}")   
+    cache.delete("admin_applications")                        
+    cache.delete("admin_dashboard")        
+    cache.delete(f"company_dashboard_{application.drive.company_id}")
+    cache.delete(f"company_drives_{application.drive.company_id}")  
 
     return jsonify({"message": "Applied successfully!"}), 201
 
@@ -206,6 +211,7 @@ def complete_profile():
             profile.resume = f"/static/resumes/{filename}"
 
         db.session.commit()
+        cache.delete("admin_students") 
         
         return jsonify({"message": "Profile updated successfully"}), 200
 
@@ -213,6 +219,7 @@ def complete_profile():
 @student_bp.route("/student/my_applications", methods=["GET"])
 @auth_required("token")
 @roles_required("student")
+@cache.cached(key_prefix=lambda: f"student_applications_{current_user.id}")
 def student_my_applications():
     my_applications = Application.query.filter_by(
         student_id=current_user.id

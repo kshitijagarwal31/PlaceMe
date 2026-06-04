@@ -103,6 +103,8 @@ def register_student():
         roles=[student_role]
     )
     db.session.commit()
+    cache.delete("admin_students")   
+    cache.delete("admin_dashboard")
     
     return make_response(jsonify({
         "message": "Student registered successfully.",
@@ -147,6 +149,8 @@ def register_company():
         roles=[company_role]
     )
     db.session.commit()
+    cache.delete("admin_companies")  
+    cache.delete("admin_dashboard") 
     
     return make_response(jsonify({
         "message": "Company registered successfully.",

@@ -11,6 +11,7 @@ company_bp = Blueprint("company_bp", __name__)
 @company_bp.route("/company/dashboard_data", methods=["GET"])
 @auth_required("token")
 @roles_required("company")
+@cache.cached(key_prefix=lambda: f"company_dashboard_{current_user.id}")
 def company_dashboard_data():
 
     all_drives     = PlacementDrive.query.filter_by(company_id=current_user.id).all()
@@ -125,12 +126,17 @@ def create_drive():
     )
     db.session.add(drive)
     db.session.commit()
+    cache.delete(f"company_dashboard_{current_user.id}") 
+    cache.delete(f"company_drives_{current_user.id}")     
+    cache.delete("admin_placement_drives")               
+    cache.delete("admin_dashboard")    
 
     return jsonify({"message": "Drive created successfully"}), 201
 
 @company_bp.route("/company/my_drives", methods=["GET"])
 @auth_required("token")
 @roles_required("company")
+@cache.cached(key_prefix=lambda: f"company_drives_{current_user.id}")
 def company_my_drives():
 
     all_drives = PlacementDrive.query.filter_by(company_id=current_user.id).all()
@@ -234,6 +240,10 @@ def company_application_update(app_id):
     application.status = data.get("status", application.status)
     application.feedback = data.get("feedback", application.feedback) 
     db.session.commit()
+    cache.delete(f"company_dashboard_{current_user.id}")
+    cache.delete("admin_dashboard")
+    cache.delete("admin_applications")   
+    cache.delete(f"student_applications_{application.student_id}")
 
     return jsonify({"message": f"Application {application.status} successfully"}), 200
 

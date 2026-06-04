@@ -53,7 +53,7 @@ def init_db(app):
             )
             
             db.session.commit()
-
+            
 
 app = create_app()
 
