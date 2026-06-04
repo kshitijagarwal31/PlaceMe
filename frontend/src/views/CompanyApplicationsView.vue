@@ -352,6 +352,8 @@ export default {
         )
         if (application) application.status = status
 
+        await this.fetchApplications() 
+
         this.closeModal()
       } catch (err) {
         console.error("Status update failed:", err)
@@ -399,7 +401,7 @@ export default {
         if (application) application.status = "Interview Scheduled"
 
         this.closeModal()
-        alert("Interview scheduled!")
+        alert("✅ Interview scheduled!")
       } catch (err) {
         this.scheduleError = "Failed to schedule. Please try again."
         console.error("Schedule failed:", err)

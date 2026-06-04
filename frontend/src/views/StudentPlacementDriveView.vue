@@ -257,20 +257,20 @@ export default {
           {},
           this.getHeaders()
         )
-        alert("Applied successfully!")
 
         const drive = this.drives.find((item) => item.id === driveId)
         if (drive) drive.already_applied = true
-
-        if (this.selectedDrive && this.selectedDrive.id === driveId) {
+        if (this.selectedDrive?.id === driveId) {
           this.selectedDrive.already_applied = true
         }
+
+        alert("✅ Applied Successfully!")
+
       } catch (err) {
         const msg = err.response?.data?.message || "Something went wrong!"
         alert(msg)
       }
     },
-
     closeModal() {
       this.selectedDrive = null
     }

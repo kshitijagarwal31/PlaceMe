@@ -115,7 +115,7 @@ def apply_drive(drive_id):
     profile = StudentProfile.query.filter_by(user_id=current_user.id).first()
 
     if not profile or not profile.cgpa or not profile.skills or not profile.resume or not profile.bio:
-        return jsonify({"message": "Please complete your profile before applying for a drive"}), 403
+        return jsonify({"message": "⚠️ Please complete your profile before applying for a drive"}), 403
 
     drive = PlacementDrive.query.get(drive_id)
 
@@ -132,6 +132,8 @@ def apply_drive(drive_id):
     if existing:
         return jsonify({"message": "Already applied!"}), 400
 
+    company_user_id = drive.company_id
+
     application = Application(
         student_id=current_user.id,
         drive_id=drive_id,
@@ -139,13 +141,14 @@ def apply_drive(drive_id):
     )
     db.session.add(application)
     db.session.commit()
-    cache.delete(f"student_applications_{current_user.id}")   
-    cache.delete("admin_applications")                        
-    cache.delete("admin_dashboard")        
-    cache.delete(f"company_dashboard_{application.drive.company_id}")
-    cache.delete(f"company_drives_{application.drive.company_id}")  
 
-    return jsonify({"message": "Applied successfully!"}), 201
+    cache.delete(f"student_applications_{current_user.id}")
+    cache.delete("admin_applications")
+    cache.delete("admin_dashboard")
+    cache.delete(f"company_dashboard_{company_user_id}")  
+    cache.delete(f"company_drives_{company_user_id}")    
+
+    return jsonify({"message": "✅ Applied successfully!"}), 201
 
 
 @student_bp.route("/student/complete_profile", methods=["GET", "PUT"])
