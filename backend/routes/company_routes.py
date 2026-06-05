@@ -244,6 +244,45 @@ def company_application_update(app_id):
     cache.delete("admin_dashboard")
     cache.delete("admin_applications")   
     cache.delete(f"student_applications_{application.student_id}")
+    
+    if application.status == "Interview Scheduled":
+        from tasks import send_interview_reminder
+        send_interview_reminder.delay(
+            student_email      = application.student.email,
+            student_name       = application.student.name,
+            job_title          = application.placement_drive.job_title,
+            company_name       = current_user.name,
+            interview_date     = data.get("interview_date"),
+            interview_time     = data.get("interview_time"),
+            interview_location = data.get("interview_location")
+        )
+
+    elif application.status == "Shortlisted":
+        from tasks import send_shortlisted_notification
+        send_shortlisted_notification.delay(
+            student_email = application.student.email,
+            student_name  = application.student.name,
+            job_title     = application.placement_drive.job_title,
+            company_name  = current_user.name
+        )
+
+    elif application.status == "Selected":
+        from tasks import send_selected_notification
+        send_selected_notification.delay(
+            student_email = application.student.email,
+            student_name  = application.student.name,
+            job_title     = application.placement_drive.job_title,
+            company_name  = current_user.name
+        )
+
+    elif application.status == "Rejected":
+        from tasks import send_rejected_notification
+        send_rejected_notification.delay(
+            student_email = application.student.email,
+            student_name  = application.student.name,
+            job_title     = application.placement_drive.job_title,
+            company_name  = current_user.name
+        )
 
     return jsonify({"message": f"Application {application.status} successfully"}), 200
 
