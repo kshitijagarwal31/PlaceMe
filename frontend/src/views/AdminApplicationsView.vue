@@ -127,7 +127,7 @@
           <div class="detail-row" v-if="selectedApplication.resume">
             <span class="detail-label">Resume</span>
             <a
-              :href="selectedApplication.resume"
+              :href="'http://localhost:5000' + selectedApplication.resume"
               target="_blank"
               class="resume-link"
             >

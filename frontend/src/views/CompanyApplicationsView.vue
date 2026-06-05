@@ -124,7 +124,7 @@
               <span class="detail-label">Resume</span>
               <a
                 v-if="selectedApp.resume"
-                :href="selectedApp.resume"
+                :href="'http://localhost:5000' + selectedApp.resume"
                 target="_blank"
                 class="resume-link"
               >

@@ -115,16 +115,16 @@
         </div>
 
         <div class="form-group">
-          <label>Resume (PDF) <span class="required">*</span></label>
+        <label>Resume (PDF) <span class="required">*</span></label>
 
-          <div v-if="form.resume && !newResume" class="resume-existing">
-            <a :href="form.resume" target="_blank" class="resume-link">
-              View Current Resume
-            </a>
-            <button class="btn-change-resume" @click="newResume = true">
-              Change Resume
-            </button>
-          </div>
+        <div v-if="form.resume && !newResume" class="resume-existing">
+          <a :href="'http://localhost:5000' + form.resume" target="_blank" class="resume-link">
+            View Current Resume
+          </a>
+          <button class="btn-change-resume" @click="newResume = true">
+            Change Resume
+          </button>
+        </div>
 
           <input
             v-else

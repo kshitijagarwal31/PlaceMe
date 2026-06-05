@@ -134,10 +134,10 @@
           <div class="detail-row" v-if="selectedStudent.resume">
             <span class="detail-label">Resume</span>
             <a
-              :href="selectedStudent.resume"
-              target="_blank"
-              class="resume-link"
-            >
+               :href="'http://localhost:5000' + selectedStudent.resume"
+                target="_blank"
+                class="resume-link"
+              >
               View Resume
             </a>
           </div>
