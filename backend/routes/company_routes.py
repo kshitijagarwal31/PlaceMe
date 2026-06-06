@@ -5,6 +5,8 @@ from models import CompanyProfile, PlacementDrive, Application
 from datetime import datetime 
 from extensions import cache 
 
+from tasks import send_interview_reminder, send_shortlisted_notification, send_selected_notification, send_rejected_notification, export_company_drives_csv
+
 company_bp = Blueprint("company_bp", __name__)
 
 
@@ -246,7 +248,6 @@ def company_application_update(app_id):
     cache.delete(f"student_applications_{application.student_id}")
     
     if application.status == "Interview Scheduled":
-        from tasks import send_interview_reminder
         send_interview_reminder.delay(
             student_email      = application.student.email,
             student_name       = application.student.name,
@@ -258,7 +259,6 @@ def company_application_update(app_id):
         )
 
     elif application.status == "Shortlisted":
-        from tasks import send_shortlisted_notification
         send_shortlisted_notification.delay(
             student_email = application.student.email,
             student_name  = application.student.name,
@@ -267,7 +267,6 @@ def company_application_update(app_id):
         )
 
     elif application.status == "Selected":
-        from tasks import send_selected_notification
         send_selected_notification.delay(
             student_email = application.student.email,
             student_name  = application.student.name,
@@ -276,7 +275,6 @@ def company_application_update(app_id):
         )
 
     elif application.status == "Rejected":
-        from tasks import send_rejected_notification
         send_rejected_notification.delay(
             student_email = application.student.email,
             student_name  = application.student.name,
@@ -291,7 +289,6 @@ def company_application_update(app_id):
 @auth_required("token")
 @roles_required("company")
 def export_company_csv():
-    from tasks import export_company_drives_csv
     export_company_drives_csv.delay(
         company_email=current_user.email,
         company_name=current_user.name,

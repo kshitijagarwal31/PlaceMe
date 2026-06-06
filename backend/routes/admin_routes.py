@@ -5,6 +5,8 @@ from database import db
 from models import User, Role, StudentProfile, CompanyProfile, PlacementDrive, Application
 from extensions import cache 
 
+from tasks import send_company_approval_email, send_drive_approval_email
+
 admin_bp = Blueprint("admin_bp", __name__)
 
 
@@ -228,7 +230,6 @@ def approve_company(id):
     cache.delete("admin_companies")
     cache.delete("admin_dashboard")
 
-    from tasks import send_company_approval_email
     send_company_approval_email.delay(
         company_email=company.email,
         company_name=company.name,
@@ -247,7 +248,6 @@ def reject_company(id):
     if not company:
         return {"message": "Company not found"}, 404
 
-    from tasks import send_company_approval_email
     send_company_approval_email.delay(
         company_email=company.email,
         company_name=company.name,
@@ -339,7 +339,6 @@ def approve_drive(drive_id):
     cache.delete("admin_placement_drives")
     cache.delete("admin_dashboard")
 
-    from tasks import send_drive_approval_email
     send_drive_approval_email.delay(
         company_email=drive.company.email,
         company_name=drive.company.name,
@@ -367,7 +366,6 @@ def reject_drive(drive_id):
     cache.delete("admin_placement_drives")
     cache.delete("admin_dashboard")
 
-    from tasks import send_drive_approval_email
     send_drive_approval_email.delay(
         company_email=company_email,
         company_name=company_name,
