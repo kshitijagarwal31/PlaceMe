@@ -15,7 +15,6 @@
       />
     </div>
 
-    <!-- TABLE -->
     <div class="table-box">
       <table>
         <thead>
@@ -71,7 +70,6 @@
       </div>
     </div>
 
-    <!-- MODAL -->
     <div
       v-if="selectedStudent"
       class="modal-overlay"

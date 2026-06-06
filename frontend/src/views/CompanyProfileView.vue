@@ -14,7 +14,6 @@
 
     <div v-else class="form-grid">
 
-      <!-- PREVIEW -->
       <div class="section-box">
 
         <div class="preview-top">
@@ -65,7 +64,6 @@
 
       </div>
 
-      <!-- FORM -->
       <div class="section-box">
 
         <h3 class="form-title">Company Information</h3>

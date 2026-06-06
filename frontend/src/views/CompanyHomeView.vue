@@ -24,7 +24,6 @@
       Loading...
     </div>
 
-    <!-- STATS -->
     <div v-else class="cards">
       <div class="card">
         <h2>{{ stats.total_drives }}</h2>
@@ -46,7 +45,6 @@
 
     <div v-if="!loadingStats" class="requests-grid">
 
-      <!-- DRIVES -->
       <div class="section-box">
         <div class="section-header">
           <h3>Active Drives</h3>
@@ -77,7 +75,6 @@
         </div>
       </div>
 
-      <!-- APPLICATIONS -->
       <div class="section-box">
         <div class="section-header">
           <h3>Recent Applicants</h3>

@@ -14,7 +14,6 @@
 
     <div v-else>
 
-      <!-- STATS -->
       <div class="cards">
         <div class="card">
           <h2>{{ stats.total_students }}</h2>
@@ -42,7 +41,6 @@
         </div>
       </div>
 
-      <!-- REQUESTS -->
       <div class="requests-grid">
 
         <div class="section-box">

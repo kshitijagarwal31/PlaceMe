@@ -15,7 +15,6 @@
       />
     </div>
 
-    <!-- TABLE -->
     <div class="table-box">
       <table>
         <thead>
@@ -76,7 +75,6 @@
       </div>
     </div>
 
-    <!-- MODAL -->
     <div
       v-if="selectedDrive"
       class="modal-overlay"

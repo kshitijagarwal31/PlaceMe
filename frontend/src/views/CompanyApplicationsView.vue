@@ -19,7 +19,6 @@
       Loading applications...
     </div>
 
-    <!-- TABLE -->
     <div v-else class="table-box">
       <table>
         <thead>
@@ -63,7 +62,6 @@
       </div>
     </div>
 
-    <!-- MODAL -->
     <div v-if="selectedApp" class="modal-overlay" @click.self="closeModal">
       <div class="modal">
 

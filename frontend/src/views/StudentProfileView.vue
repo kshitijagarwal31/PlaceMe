@@ -14,7 +14,6 @@
 
     <div v-else class="profile-grid">
 
-      <!-- PREVIEW -->
       <div class="section-box preview-box">
 
         <div class="profile-top">
@@ -60,7 +59,6 @@
 
       </div>
 
-      <!-- FORM -->
       <div class="section-box form-box">
 
         <h3 class="form-title">Personal Information</h3>

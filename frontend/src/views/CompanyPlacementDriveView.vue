@@ -19,7 +19,6 @@
       Loading drives...
     </div>
 
-    <!-- TABLE -->
     <div v-else class="table-box">
       <table>
         <thead>
@@ -65,7 +64,6 @@
       </div>
     </div>
 
-    <!-- MODAL -->
     <div
       v-if="selectedDrive"
       class="modal-overlay"
