@@ -50,6 +50,7 @@
       <div class="section-box">
         <div class="section-header">
           <h3>My Recent Applications</h3>
+          <button class="btn-export" @click="exportCSV">Export CSV</button>
         </div>
 
         <div v-if="applications.length === 0" class="empty">
@@ -179,6 +180,19 @@ export default {
 
     goToProfile() {
       this.$router.push("/student_dashboard/profile")
+    },
+
+    async exportCSV() {
+      try {
+        await axios.get(
+          "http://localhost:5000/student/export_csv",
+          this.getHeaders()
+        )
+        alert("✅ Check your email, your applications CSV has been sent!")
+      } catch (err) {
+        console.error("Export failed:", err)
+        alert("Export failed, please try again!")
+      }
     }
   }
 }
@@ -187,6 +201,9 @@ export default {
 <style scoped>
 
 .topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 26px;
 }
 
@@ -295,6 +312,9 @@ export default {
 }
 
 .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -415,6 +435,22 @@ export default {
   color: #9ca3af;
   font-size: 14px;
   padding: 35px 0;
+}
+
+.btn-export {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-export:hover {
+  background: #1d4ed8;
 }
 
 </style>

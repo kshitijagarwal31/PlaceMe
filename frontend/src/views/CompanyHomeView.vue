@@ -46,6 +46,37 @@
 
     <div v-if="!loadingStats" class="requests-grid">
 
+      <!-- DRIVES -->
+      <div class="section-box">
+        <div class="section-header">
+          <h3>Active Drives</h3>
+          <button class="btn-export" @click="exportCSV">Export CSV</button>
+        </div>
+
+        <div v-if="drives.length === 0" class="empty">
+          No drives yet
+        </div>
+
+        <div
+          v-for="drive in drives.slice(0, 5)"
+          :key="drive.id"
+          class="request-item"
+        >
+          <div class="request-left">
+            <div class="avatar">
+              {{ drive.job_title?.charAt(0) || "?" }}
+            </div>
+            <div>
+              <p class="request-name">{{ drive.job_title }}</p>
+              <p class="request-sub">{{ drive.start_date }} · {{ drive.end_date }}</p>
+            </div>
+          </div>
+          <span :class="getDriveStatusClass(drive.status)">
+            {{ drive.status }}
+          </span>
+        </div>
+      </div>
+
       <!-- APPLICATIONS -->
       <div class="section-box">
         <div class="section-header">
@@ -76,35 +107,6 @@
         </div>
       </div>
 
-      <!-- DRIVES -->
-      <div class="section-box">
-        <div class="section-header">
-          <h3>Active Drives</h3>
-        </div>
-
-        <div v-if="drives.length === 0" class="empty">
-          No drives yet
-        </div>
-
-        <div
-          v-for="drive in drives.slice(0, 5)"
-          :key="drive.id"
-          class="request-item"
-        >
-          <div class="request-left">
-            <div class="avatar">
-              {{ drive.job_title?.charAt(0) || "?" }}
-            </div>
-            <div>
-              <p class="request-name">{{ drive.job_title }}</p>
-              <p class="request-sub">{{ drive.start_date }} · {{ drive.end_date }}</p>
-            </div>
-          </div>
-          <span :class="getDriveStatusClass(drive.status)">
-            {{ drive.status }}
-          </span>
-        </div>
-      </div>
 
     </div>
 
@@ -216,6 +218,19 @@ export default {
 
     goToProfile() {
       this.$router.push("/company_dashboard/profile")
+    },
+
+    async exportCSV() {
+      try {
+        await axios.get(
+          "http://localhost:5000/company/export_csv",
+          this.getHeaders()
+        )
+        alert("✅ Check your email, your applications CSV has been sent!")
+      } catch (err) {
+        console.error("Export failed:", err)
+        alert("Export failed, please try again!")
+      }
     }
   }
 }
@@ -272,6 +287,9 @@ export default {
 }
 
 .topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 26px;
 }
 
@@ -333,6 +351,9 @@ export default {
 }
 
 .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 16px;
 }
 
@@ -463,6 +484,22 @@ export default {
   color: #9ca3af;
   font-size: 14px;
   padding: 35px 0;
+}
+
+.btn-export {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-export:hover {
+  background: #1d4ed8;
 }
 
 </style>

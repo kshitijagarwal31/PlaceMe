@@ -224,10 +224,19 @@ def approve_company(id):
     if not company:
         return {"message": "Company not found"}, 404
     company.is_approved = True
-    db.session.commit()    
+    db.session.commit()
     cache.delete("admin_companies")
     cache.delete("admin_dashboard")
+
+    from tasks import send_company_approval_email
+    send_company_approval_email.delay(
+        company_email=company.email,
+        company_name=company.name,
+        is_approved=True
+    )
+
     return {"message": "Company approved successfully"}, 200
+
 
 
 @admin_bp.route("/admin/company/reject/<int:id>", methods=["POST"])
@@ -237,12 +246,20 @@ def reject_company(id):
     company = User.query.get(id)
     if not company:
         return {"message": "Company not found"}, 404
+
+    from tasks import send_company_approval_email
+    send_company_approval_email.delay(
+        company_email=company.email,
+        company_name=company.name,
+        is_approved=False
+    )
+
     db.session.delete(company)
     db.session.commit()
     cache.delete("admin_companies")
     cache.delete("admin_dashboard")
-    return {"message": "Company rejected and deleted"}, 200
 
+    return {"message": "Company rejected and deleted"}, 200
 
 @admin_bp.route("/admin/company/blacklist/<int:company_id>", methods=["POST"])
 @auth_required("token")
@@ -315,11 +332,21 @@ def approve_drive(drive_id):
     drive = PlacementDrive.query.get(drive_id)
     if not drive:
         return jsonify({"message": "Drive not found"}), 404
-    drive.status = "Active"    
+    
+    drive.status = "Active"
     drive.is_approved = True
     db.session.commit()
     cache.delete("admin_placement_drives")
     cache.delete("admin_dashboard")
+
+    from tasks import send_drive_approval_email
+    send_drive_approval_email.delay(
+        company_email=drive.company.email,
+        company_name=drive.company.name,
+        drive_name=drive.job_title,
+        is_approved=True
+    )
+
     return jsonify({"message": "Drive approved"})
 
 
@@ -330,8 +357,22 @@ def reject_drive(drive_id):
     drive = PlacementDrive.query.get(drive_id)
     if not drive:
         return jsonify({"message": "Drive not found"}), 404
+
+    company_email = drive.company.email
+    company_name = drive.company.name
+    drive_name = drive.job_title
+
     drive.status = "Rejected"
     db.session.commit()
     cache.delete("admin_placement_drives")
     cache.delete("admin_dashboard")
+
+    from tasks import send_drive_approval_email
+    send_drive_approval_email.delay(
+        company_email=company_email,
+        company_name=company_name,
+        drive_name=drive_name,
+        is_approved=False
+    )
+
     return jsonify({"message": "Drive rejected"})

@@ -170,7 +170,7 @@
             </div>
 
             <div class="form-group form-group-full">
-              <label class="form-label">Location / Meeting Link <span class="required">*</span></label>
+              <label class="form-label">Location<span class="required">*</span></label>
               <input
                 v-model="interview.location"
                 type="text"

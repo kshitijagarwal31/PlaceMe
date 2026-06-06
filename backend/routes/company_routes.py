@@ -286,3 +286,16 @@ def company_application_update(app_id):
 
     return jsonify({"message": f"Application {application.status} successfully"}), 200
 
+
+@company_bp.route("/company/export_csv", methods=["GET"])
+@auth_required("token")
+@roles_required("company")
+def export_company_csv():
+    from tasks import export_company_drives_csv
+    export_company_drives_csv.delay(
+        company_email=current_user.email,
+        company_name=current_user.name,
+        company_id=current_user.id
+    )
+    return jsonify({"message": "Check your email, your applications CSV has been sent!"}), 200
+

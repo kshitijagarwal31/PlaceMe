@@ -3,9 +3,12 @@ from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from dotenv import load_dotenv
 import smtplib
 import os
-from dotenv import load_dotenv
+import csv
+import io
+
 
 load_dotenv()
 
@@ -143,3 +146,115 @@ Best regards!"""
         subject="Application Update",
         message=message
     )
+    
+
+@celery_app.task()
+def export_student_applications_csv(student_email, student_name, student_id):
+    from app import create_app
+    from models import Application
+
+    app = create_app()
+    with app.app_context():
+        applications = Application.query.filter_by(student_id=student_id).all()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        # Header
+        writer.writerow(["Sr No", "Company", "Role", "Status", "Applied Date"])
+
+        # Data
+        for i, application in enumerate(applications, start=1):
+            writer.writerow([
+                i,
+                application.placement_drive.company.name,
+                application.placement_drive.job_title,
+                application.status,
+                application.apply_date
+            ])
+
+        filepath = f"exports/student_{student_id}_applications.csv"
+        os.makedirs("exports", exist_ok=True)
+        with open(filepath, "w", newline="") as f:
+            f.write(output.getvalue())
+
+        send_email(
+            to_address=student_email,
+            subject="Your Applications Export",
+            message=f"Hello {student_name},\n\nPlease find your applications data attached.\n\nBest regards!",
+            attachment=filepath
+        )
+        
+
+@celery_app.task()
+def export_company_drives_csv(company_email, company_name, company_id):
+    from app import create_app
+    from models import PlacementDrive
+
+    app = create_app()
+    with app.app_context():
+        drives = PlacementDrive.query.filter_by(company_id=company_id).all()
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        writer.writerow(["Sr No", "Drive Name", "Start Date", "Last Date", "Status"])
+
+        for i, drive in enumerate(drives, start=1):
+            writer.writerow([
+                i,
+                drive.job_title,
+                drive.start_date.strftime("%d-%m-%Y") if drive.start_date else "N/A",
+                drive.last_date.strftime("%d-%m-%Y") if drive.last_date else "N/A",
+                drive.status
+            ])
+
+        filepath = f"exports/company_{company_id}_drives.csv"
+        os.makedirs("exports", exist_ok=True)
+        with open(filepath, "w", newline="") as f:
+            f.write(output.getvalue())
+
+        send_email(
+            to_address=company_email,
+            subject="Your Placement Drives Export",
+            message=f"Hello {company_name},\n\nPlease find your placement drives data attached.\n\nBest regards!",
+            attachment=filepath
+        )
+        
+        
+@celery_app.task()
+def send_company_approval_email(company_email, company_name, is_approved):
+    from app import create_app
+    app = create_app()
+    with app.app_context():
+        if is_approved:
+            send_email(
+                to_address=company_email,
+                subject="Your Account Has Been Approved!",
+                message=f"Hello {company_name},\n\nCongratulations! Your account has been approved by the admin.\n\nYou can now login and create placement drives.\n\nBest regards!"
+            )
+        else:
+            send_email(
+                to_address=company_email,
+                subject="Your Account Has Been Rejected",
+                message=f"Hello {company_name},\n\nWe regret to inform you that your account request has been rejected by the admin.\n\nBest regards!"
+            )
+            
+
+@celery_app.task()
+def send_drive_approval_email(company_email, company_name, drive_name, is_approved):
+    from app import create_app
+    app = create_app()
+    with app.app_context():
+        if is_approved:
+            send_email(
+                to_address=company_email,
+                subject="Your Placement Drive Has Been Approved!",
+                message=f"Hello {company_name},\n\nCongratulations! Your placement drive '{drive_name}' has been approved by the admin.\n\nStudents can now apply for this drive.\n\nBest regards!"
+            )
+        else:
+            send_email(
+                to_address=company_email,
+                subject="Your Placement Drive Has Been Rejected",
+                message=f"Hello {company_name},\n\nWe regret to inform you that your placement drive '{drive_name}' has been rejected by the admin.\n\nBest regards!"
+            )
