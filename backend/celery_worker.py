@@ -1,17 +1,24 @@
 from celery import Celery, Task
-from app import create_app
+import sys
+import os
 
-flask_app = create_app()
+sys.path.insert(0, '/app')
 
-celery_app = Celery(
-    "tasks",
-    broker="redis://localhost:6379/1",
-    backend="redis://localhost:6379/2",
-    include=["tasks"]
-)
+def make_celery():
+    celery_app = Celery(
+        "tasks",
+        broker=os.getenv("REDIS_URL", "redis://redis:6379/1"),
+        backend=os.getenv("REDIS_URL", "redis://redis:6379/2"),
+        include=["tasks"]
+    )
+    return celery_app
+
+celery_app = make_celery()
 
 class FlaskTask(Task):
     def __call__(self, *args, **kwargs):
+        from app import create_app
+        flask_app = create_app()
         with flask_app.app_context():
             return self.run(*args, **kwargs)
 
