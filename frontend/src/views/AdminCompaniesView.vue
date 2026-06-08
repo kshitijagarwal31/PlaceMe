@@ -4,7 +4,7 @@
     <div class="topbar">
       <div>
         <h1>Companies</h1>
-        <p>Manage all registered companies</p>
+        <p>All registered companies</p>
       </div>
 
       <input

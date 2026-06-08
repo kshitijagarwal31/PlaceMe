@@ -4,7 +4,7 @@
     <div class="topbar">
       <div>
         <h1>My Applications</h1>
-        <p>Track all your placement applications · {{ applications.length }} total</p>
+        <p>Track all your placement applications</p>
       </div>
 
       <input

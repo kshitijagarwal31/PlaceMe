@@ -13,9 +13,7 @@
 <script>
 
 export default {
-
   name:"Footer"
-
 }
 
 </script>
@@ -25,7 +23,7 @@ export default {
 .footer{
   width:100%;
   text-align:center;
-  padding:12px 16px;
+  padding:22px;
   border-top:1px solid #e5e7eb;
   color:#6b7280;
   background:white;
