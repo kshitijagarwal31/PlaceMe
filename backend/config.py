@@ -5,7 +5,7 @@ load_dotenv()
 
 class Config():
     DEBUG = False 
-    SQLALCHEMY_TRACK_MODIFICATIONS = True 
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     
 class LocalDevelopmentConfig(Config):
