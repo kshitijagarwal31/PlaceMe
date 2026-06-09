@@ -14,9 +14,9 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      - .env.docker
+      - .env
     environment:
-      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
     depends_on:
       - db
@@ -25,11 +25,11 @@ services:
   celery:
     build: ./backend
     env_file:     
-      - .env.docker
-    command: celery -A celery_worker.celery_app worker --loglevel=info
+      - .env
     environment:
-      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
+    command: celery -A celery_worker.celery_app worker --loglevel=info
     depends_on:
       - redis
       - backend
