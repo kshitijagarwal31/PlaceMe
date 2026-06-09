@@ -95,7 +95,7 @@ export default {
       this.loading = true
 
       try {
-        const res = await axios.post("http://placeme-api.up.railway.app/login", {
+        const res = await axios.post("https://placeme-api.up.railway.app/login", {
           username: this.username,
           password: this.password
         })

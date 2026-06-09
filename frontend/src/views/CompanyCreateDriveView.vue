@@ -167,7 +167,7 @@ export default {
 
       try {
         await axios.post(
-          "http://placeme-api.up.railway.app/company/create_drive",
+          "https://placeme-api.up.railway.app/company/create_drive",
           this.form,
           this.getHeaders()
         )

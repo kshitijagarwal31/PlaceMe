@@ -198,7 +198,7 @@ export default {
   async mounted() {
     const token = localStorage.getItem("token")
 
-    const res = await axios.get("http://placeme-api.up.railway.app/admin/companies", {
+    const res = await axios.get("https://placeme-api.up.railway.app/admin/companies", {
       headers: { "Authentication-Token": token }
     })
 
@@ -238,7 +238,7 @@ export default {
 
     async approveCompany(company) {
       await axios.post(
-        `http://placeme-api.up.railway.app/admin/company/approve/${company.id}`,
+        `https://placeme-api.up.railway.app/admin/company/approve/${company.id}`,
         {},
         this.getHeaders()
       )
@@ -247,7 +247,7 @@ export default {
 
     async rejectCompany(company) {
       await axios.post(
-        `http://placeme-api.up.railway.app/admin/company/reject/${company.id}`,
+        `https://placeme-api.up.railway.app/admin/company/reject/${company.id}`,
         {},
         this.getHeaders()
       )
@@ -256,7 +256,7 @@ export default {
 
     async blacklistCompany(company) {
       await axios.post(
-        `http://placeme-api.up.railway.app/admin/company/blacklist/${company.id}`,
+        `https://placeme-api.up.railway.app/admin/company/blacklist/${company.id}`,
         {},
         this.getHeaders()
       )
@@ -265,7 +265,7 @@ export default {
 
     async unblacklistCompany(company) {
       await axios.post(
-        `http://placeme-api.up.railway.app/admin/company/unblacklist/${company.id}`,
+        `https://placeme-api.up.railway.app/admin/company/unblacklist/${company.id}`,
         {},
         this.getHeaders()
       )

@@ -220,7 +220,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://placeme-api.up.railway.app/student/all_drives",
+          "https://placeme-api.up.railway.app/student/all_drives",
           this.getHeaders()
         )
         this.drives = res.data.drives || []
@@ -237,7 +237,7 @@ export default {
 
       try {
         const res = await axios.get(
-          `http://placeme-api.up.railway.app/student/drive_detail/${drive.id}`,
+          `https://placeme-api.up.railway.app/student/drive_detail/${drive.id}`,
           this.getHeaders()
         )
         this.selectedDrive = res.data
@@ -251,7 +251,7 @@ export default {
     async applyDrive(driveId) {
       try {
         await axios.post(
-          `http://placeme-api.up.railway.app/student/apply/${driveId}`,
+          `https://placeme-api.up.railway.app/student/apply/${driveId}`,
           {},
           this.getHeaders()
         )

@@ -158,7 +158,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://placeme-api.up.railway.app/student/dashboard_data",
+          "https://placeme-api.up.railway.app/student/dashboard_data",
           this.getHeaders()
         )
         const data = res.data
@@ -182,7 +182,7 @@ export default {
     async exportCSV() {
       try {
         await axios.get(
-          "http://placeme-api.up.railway.app/student/export_csv",
+          "https://placeme-api.up.railway.app/student/export_csv",
           this.getHeaders()
         )
         alert("✅ Check your email, your applications CSV has been sent!")

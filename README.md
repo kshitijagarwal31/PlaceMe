@@ -97,7 +97,7 @@ docker-compose up --build
 ### 4. Open in browser
 ```
 Frontend  →  http://localhost:5173
-Backend   →  http://placeme-api.up.railway.app
+Backend   →  https://placeme-api.up.railway.app
 ```
 
 ---

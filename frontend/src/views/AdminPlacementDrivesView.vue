@@ -179,7 +179,7 @@ export default {
   async mounted() {
     const token = localStorage.getItem("token")
 
-    const res = await axios.get("http://placeme-api.up.railway.app/admin/placement_drives", {
+    const res = await axios.get("https://placeme-api.up.railway.app/admin/placement_drives", {
       headers: { "Authentication-Token": token }
     })
 
@@ -213,7 +213,7 @@ export default {
 
     async approveDrive(drive) {
       await axios.post(
-        `http://placeme-api.up.railway.app/admin/placement_drive/approve/${drive.id}`,
+        `https://placeme-api.up.railway.app/admin/placement_drive/approve/${drive.id}`,
         {},
         this.getHeaders()
       )
@@ -222,7 +222,7 @@ export default {
 
     async rejectDrive(drive) {
       await axios.post(
-        `http://placeme-api.up.railway.app/admin/placement_drive/reject/${drive.id}`,
+        `https://placeme-api.up.railway.app/admin/placement_drive/reject/${drive.id}`,
         {},
         this.getHeaders()
       )
