@@ -1,4 +1,4 @@
-.env.docker
+.env
 backend/.env
 venv/
 __pycache__/
