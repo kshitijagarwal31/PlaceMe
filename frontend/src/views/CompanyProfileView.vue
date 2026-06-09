@@ -200,7 +200,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/company/complete_profile",
+          "http://placeme-api.up.railway.app/company/complete_profile",
           this.getHeaders()
         )
         const data = res.data
@@ -240,7 +240,7 @@ export default {
 
       try {
         await axios.post(
-          "http://localhost:5000/company/complete_profile",
+          "http://placeme-api.up.railway.app/company/complete_profile",
           {
             name: this.form.full_name,
             username: this.form.username,

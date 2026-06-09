@@ -164,7 +164,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/admin/dashboard_data",
+          "http://placeme-api.up.railway.app/admin/dashboard_data",
           this.getHeaders()
         )
 
@@ -182,7 +182,7 @@ export default {
     async approveCompany(company) {
       try {
         await axios.post(
-          `http://localhost:5000/admin/company/approve/${company.id}`,
+          `http://placeme-api.up.railway.app/admin/company/approve/${company.id}`,
           {},
           this.getHeaders()
         )
@@ -199,7 +199,7 @@ export default {
     async rejectCompany(company) {
       try {
         await axios.post(
-          `http://localhost:5000/admin/company/reject/${company.id}`,
+          `http://placeme-api.up.railway.app/admin/company/reject/${company.id}`,
           {},
           this.getHeaders()
         )
@@ -215,7 +215,7 @@ export default {
     async approveDrive(drive) {
       try {
         await axios.post(
-          `http://localhost:5000/admin/placement_drive/approve/${drive.id}`,
+          `http://placeme-api.up.railway.app/admin/placement_drive/approve/${drive.id}`,
           {},
           this.getHeaders()
         )
@@ -232,7 +232,7 @@ export default {
     async rejectDrive(drive) {
       try {
         await axios.post(
-          `http://localhost:5000/admin/placement_drive/reject/${drive.id}`,
+          `http://placeme-api.up.railway.app/admin/placement_drive/reject/${drive.id}`,
           {},
           this.getHeaders()
         )

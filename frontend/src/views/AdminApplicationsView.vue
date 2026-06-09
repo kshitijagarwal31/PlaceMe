@@ -125,7 +125,7 @@
           <div class="detail-row" v-if="selectedApplication.resume">
             <span class="detail-label">Resume</span>
             <a
-              :href="'http://localhost:5000' + selectedApplication.resume"
+              :href="'http://placeme-api.up.railway.app' + selectedApplication.resume"
               target="_blank"
               class="resume-link"
             >
@@ -178,7 +178,7 @@ export default {
   async mounted() {
     const token = localStorage.getItem("token")
 
-    const res = await axios.get("http://localhost:5000/admin/applications", {
+    const res = await axios.get("http://placeme-api.up.railway.app/admin/applications", {
       headers: { "Authentication-Token": token }
     })
 

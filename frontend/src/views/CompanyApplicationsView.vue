@@ -122,7 +122,7 @@
               <span class="detail-label">Resume</span>
               <a
                 v-if="selectedApp.resume"
-                :href="'http://localhost:5000' + selectedApp.resume"
+                :href="'http://placeme-api.up.railway.app' + selectedApp.resume"
                 target="_blank"
                 class="resume-link"
               >
@@ -305,7 +305,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/company/dashboard_data",
+          "http://placeme-api.up.railway.app/company/dashboard_data",
           this.getHeaders()
         )
         this.applications = res.data.applications || []
@@ -325,7 +325,7 @@ export default {
 
       try {
         const res = await axios.get(
-          `http://localhost:5000/company/application_detail/${application.id}`,
+          `http://placeme-api.up.railway.app/company/application_detail/${application.id}`,
           this.getHeaders()
         )
         this.selectedApp = res.data
@@ -340,7 +340,7 @@ export default {
     async updateStatus(status) {
       try {
         await axios.patch(
-          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
+          `http://placeme-api.up.railway.app/company/application_update/${this.selectedApp.id}`,
           { status, feedback: this.feedback },
           this.getHeaders()
         )
@@ -361,7 +361,7 @@ export default {
     async saveFeedback() {
       try {
         await axios.patch(
-          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
+          `http://placeme-api.up.railway.app/company/application_update/${this.selectedApp.id}`,
           { status: this.selectedApp.status, feedback: this.feedback },
           this.getHeaders()
         )
@@ -382,7 +382,7 @@ export default {
 
       try {
         await axios.patch(
-          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
+          `http://placeme-api.up.railway.app/company/application_update/${this.selectedApp.id}`,
           {
             status: "Interview Scheduled",
             feedback: this.feedback,

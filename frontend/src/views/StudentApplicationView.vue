@@ -205,7 +205,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/student/my_applications",
+          "http://placeme-api.up.railway.app/student/my_applications",
           this.getHeaders()
         )
         this.applications = res.data.applications || []
@@ -222,7 +222,7 @@ export default {
 
       try {
         const res = await axios.get(
-          `http://localhost:5000/student/application_detail/${application.id}`,
+          `http://placeme-api.up.railway.app/student/application_detail/${application.id}`,
           this.getHeaders()
         )
         const data = res.data

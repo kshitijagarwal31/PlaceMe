@@ -116,7 +116,7 @@
         <label>Resume (PDF) <span class="required">*</span></label>
 
         <div v-if="form.resume && !newResume" class="resume-existing">
-          <a :href="'http://localhost:5000' + form.resume" target="_blank" class="resume-link">
+          <a :href="'http://placeme-api.up.railway.app' + form.resume" target="_blank" class="resume-link">
             View Current Resume
           </a>
           <button class="btn-change-resume" @click="newResume = true">
@@ -192,7 +192,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "http://localhost:5000/student/complete_profile",
+          "http://placeme-api.up.railway.app/student/complete_profile",
           this.getHeaders()
         )
         const data = res.data
@@ -247,7 +247,7 @@ export default {
         }
 
         await axios.put(
-          "http://localhost:5000/student/complete_profile",
+          "http://placeme-api.up.railway.app/student/complete_profile",
           formData,
           {
             headers: {

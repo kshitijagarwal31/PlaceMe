@@ -132,7 +132,7 @@
           <div class="detail-row" v-if="selectedStudent.resume">
             <span class="detail-label">Resume</span>
             <a
-               :href="'http://localhost:5000' + selectedStudent.resume"
+               :href="'http://placeme-api.up.railway.app' + selectedStudent.resume"
                 target="_blank"
                 class="resume-link"
               >
@@ -187,7 +187,7 @@ export default {
   async mounted() {
     const token = localStorage.getItem("token")
 
-    const res = await axios.get("http://localhost:5000/admin/students", {
+    const res = await axios.get("http://placeme-api.up.railway.app/admin/students", {
       headers: { "Authentication-Token": token }
     })
 
@@ -214,7 +214,7 @@ export default {
 
     async blacklistStudent(student) {
       await axios.post(
-        `http://localhost:5000/admin/student/blacklist/${student.id}`,
+        `http://placeme-api.up.railway.app/admin/student/blacklist/${student.id}`,
         {},
         this.getHeaders()
       )
@@ -223,7 +223,7 @@ export default {
 
     async unblacklistStudent(student) {
       await axios.post(
-        `http://localhost:5000/admin/student/unblacklist/${student.id}`,
+        `http://placeme-api.up.railway.app/admin/student/unblacklist/${student.id}`,
         {},
         this.getHeaders()
       )
