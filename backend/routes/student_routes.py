@@ -4,8 +4,6 @@ from database import db
 from models import StudentProfile, PlacementDrive, Application
 from extensions import cache
 
-from tasks import export_student_applications_csv
-
 student_bp = Blueprint("student_bp", __name__)
 
 
@@ -281,6 +279,7 @@ def application_detail(app_id):
 @roles_required("student")
 def export_student_csv():
     try:
+        from tasks import export_student_applications_csv
         export_student_applications_csv.delay(
             student_email=current_user.email,
             student_name=current_user.name,
