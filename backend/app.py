@@ -20,7 +20,7 @@ def create_app():
 
     db.init_app(app)
     cache.init_app(app)
-    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+    CORS(app, origins=["https://place-me-one.vercel.app"], supports_credentials=True)
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(admin_bp)
