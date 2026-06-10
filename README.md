@@ -11,8 +11,8 @@
 | Role | Email | Password |
 |---|---|---|
 | Admin | admin@gmail.com | admin@123 |
-| Company | company@demo.com | company@123 |
-| Student | student@demo.com | student@123 |
+| Company | company@gmail.com | company@123 |
+| Student | student@gmail.com | student@123 |
 
 > **Note:** Register as a new company or student to experience the full flow from scratch.
 
@@ -69,6 +69,7 @@ College placement processes are often managed manually — through spreadsheets,
 | **Caching** | Redis | API Response Caching |
 | **Async Tasks** | Celery | Background Jobs · Email Notifications |
 | **Containerization** | Docker & Docker Compose | Multi-container Deployment |
+| **Deployment** | Railway + Vercel | Backend on Railway · Frontend on Vercel |
 
 ---
 
