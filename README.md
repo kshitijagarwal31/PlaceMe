@@ -2,6 +2,20 @@
 
 > A full-stack placement management system that streamlines the entire campus recruitment process — from company registration to student selection.
 
+## Live Demo
+🔗 **Frontend:** https://place-me-one.vercel.app
+🔗 **Backend API:** https://placeme-api.up.railway.app
+
+## Demo Credentials
+
+| Role | Email | Password |
+|---|---|---|
+| Admin | admin@gmail.com | admin@123 |
+| Company | company@demo.com | company@123 |
+| Student | student@demo.com | student@123 |
+
+> **Note:** Register as a new company or student to experience the full flow from scratch.
+
 ---
 
 ## Problem Statement
@@ -96,21 +110,9 @@ docker-compose up --build
 
 ### 4. Open in browser
 ```
-Frontend  →  http://localhost:5173
+Frontend  →  https://place-me-one.vercel.app
 Backend   →  https://placeme-api.up.railway.app
 ```
-
----
-
-## Demo Credentials
-
-| Role | Email | Password |
-|---|---|---|
-| Admin | admin@gmail.com | admin@123 |
-| Company | company@demo.com | company@123 |
-| Student | student@demo.com | student@123 |
-
-> **Note:** Register as a new company or student to experience the full flow from scratch.
 
 ---
 
@@ -148,4 +150,4 @@ Backend   →  https://placeme-api.up.railway.app
 ## Author
 
 **Kshitij Agarwal**  
-[GitHub](https://github.com/kshitijagarwal31) • [LinkedIn](www.linkedin.com/in/kshitij-agarwal-b80759370)
+[GitHub](https://github.com/kshitijagarwal31) • [LinkedIn](https://www.linkedin.com/in/kshitij-agarwal-b80759370)
