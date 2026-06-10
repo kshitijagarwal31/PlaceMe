@@ -280,9 +280,13 @@ def application_detail(app_id):
 @auth_required("token")
 @roles_required("student")
 def export_student_csv():
-    export_student_applications_csv.delay(
-        student_email=current_user.email,
-        student_name=current_user.name,
-        student_id=current_user.id
-    )
-    return jsonify({"message": "Check your email, your applications CSV has been sent!"}), 200
+    try:
+        export_student_applications_csv.delay(
+            student_email=current_user.email,
+            student_name=current_user.name,
+            student_id=current_user.id
+        )
+        return jsonify({"message": "Check your email, your applications CSV has been sent!"}), 200
+    except Exception as e:
+        print(f"Export error: {e}")
+        return jsonify({"message": str(e)}), 500
