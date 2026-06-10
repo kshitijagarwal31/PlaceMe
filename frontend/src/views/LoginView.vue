@@ -104,6 +104,7 @@ export default {
         localStorage.setItem("user", JSON.stringify(res.data.user))
 
         const role = res.data.user.roles[0]
+        localStorage.setItem("role", role)
 
         if (role === "admin") {
           this.$router.push("/admin_dashboard")
