@@ -36,13 +36,13 @@ def send_email(to_address, subject, message, content="text", attachment=None):
         encoders.encode_base64(part)
         part.add_header("Content-Disposition", f"attachment; filename={attachment}")
         msg.attach(part)
-
-    s = smtplib.SMTP(host=SERVER_SMTP_HOST, port=587)
-    s.starttls()
-    s.login(SENDER_ADDRESS, SENDER_PASSWORD)
-    s.send_message(msg)
-    s.quit()
-    return True
+        
+        s = smtplib.SMTP(host=SERVER_SMTP_HOST, port=587, timeout=10)
+        s.starttls()
+        s.login(SENDER_ADDRESS, SENDER_PASSWORD)
+        s.send_message(msg)
+        s.quit()
+        return True
 
 
 @celery_app.task()
