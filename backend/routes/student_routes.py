@@ -4,6 +4,8 @@ from database import db
 from models import StudentProfile, PlacementDrive, Application
 from extensions import cache
 
+from tasks import export_student_applications_csv
+
 student_bp = Blueprint("student_bp", __name__)
 
 
@@ -278,14 +280,9 @@ def application_detail(app_id):
 @auth_required("token")
 @roles_required("student")
 def export_student_csv():
-    try:
-        from tasks import export_student_applications_csv
-        export_student_applications_csv.delay(
-            student_email=current_user.email,
-            student_name=current_user.name,
-            student_id=current_user.id
-        )
-        return jsonify({"message": "Check your email, your applications CSV has been sent!"}), 200
-    except Exception as e:
-        print(f"Export error: {e}")
-        return jsonify({"message": str(e)}), 500
+    export_student_applications_csv.delay(
+        student_email=current_user.email,
+        student_name=current_user.name,
+        student_id=current_user.id
+    )
+    return jsonify({"message": "Check your email, your applications CSV has been sent!"}), 200

@@ -13,7 +13,7 @@ import io
 load_dotenv()
 
 SERVER_SMTP_HOST = "smtp.gmail.com"
-SERVER_SMTP_PORT = 587
+SERVER_SMTP_PORT = 465
 SENDER_ADDRESS   = os.getenv("SENDER_ADDRESS")
 SENDER_PASSWORD  = os.getenv("SENDER_PASSWORD")
 
@@ -37,8 +37,7 @@ def send_email(to_address, subject, message, content="text", attachment=None):
         part.add_header("Content-Disposition", f"attachment; filename={attachment}")
         msg.attach(part)
 
-    s = smtplib.SMTP(host=SERVER_SMTP_HOST, port=SERVER_SMTP_PORT)
-    s.starttls()
+    s = smtplib.SMTP_SSL(host=SERVER_SMTP_HOST, port=SERVER_SMTP_PORT)
     s.login(SENDER_ADDRESS, SENDER_PASSWORD)
     s.send_message(msg)
     s.quit()
