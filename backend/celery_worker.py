@@ -7,8 +7,8 @@ sys.path.insert(0, '/app')
 def make_celery():
     celery_app = Celery(
         "tasks",
-        broker=os.getenv("REDIS_URL", "redis://redis:6379/1"),
-        backend=os.getenv("REDIS_URL", "redis://redis:6379/2"),
+        broker=os.getenv("REDIS_URL"), 
+        backend=os.getenv("REDIS_URL"),  
         include=["tasks"]
     )
     return celery_app
