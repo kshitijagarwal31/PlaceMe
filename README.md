@@ -3,8 +3,8 @@
 > A full-stack placement management system that streamlines the entire campus recruitment process — from company registration to student selection.
 
 ## Live Demo
-🔗 **Frontend:** https://place-me-one.vercel.app
-🔗 **Backend API:** https://placeme-api.up.railway.app
+**Frontend:** https://place-me-one.vercel.app
+**Backend API:** https://placeme-api.up.railway.app
 
 ## Demo Credentials
 
@@ -57,7 +57,7 @@ College placement processes are often managed manually — through spreadsheets,
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |---|---|---|
@@ -81,8 +81,8 @@ PlaceMe/
 ├── frontend/
 ├── .env.example
 ├── .gitignore
-├── docker-compose.yml
-└── README.md
+├── README.md
+└── docker-compose.yml
 ```
 ---
 
