@@ -122,7 +122,7 @@
               <span class="detail-label">Resume</span>
               <a
                 v-if="selectedApp.resume"
-                :href="'https://placeme-api.up.railway.app' + selectedApp.resume"
+                :href="'http://localhost:5000' + selectedApp.resume"
                 target="_blank"
                 class="resume-link"
               >
@@ -173,7 +173,7 @@
                 v-model="interview.location"
                 type="text"
                 class="form-input"
-                placeholder="e.g. Room 301 or https://meet.google.com/xyz"
+                placeholder="e.g. Room 301 or http://meet.google.com/xyz"
               />
             </div>
 
@@ -305,7 +305,7 @@ export default {
 
       try {
         const res = await axios.get(
-          "https://placeme-api.up.railway.app/company/dashboard_data",
+          "http://localhost:5000/company/dashboard_data",
           this.getHeaders()
         )
         this.applications = res.data.applications || []
@@ -325,7 +325,7 @@ export default {
 
       try {
         const res = await axios.get(
-          `https://placeme-api.up.railway.app/company/application_detail/${application.id}`,
+          `http://localhost:5000/company/application_detail/${application.id}`,
           this.getHeaders()
         )
         this.selectedApp = res.data
@@ -340,7 +340,7 @@ export default {
     async updateStatus(status) {
       try {
         await axios.patch(
-          `https://placeme-api.up.railway.app/company/application_update/${this.selectedApp.id}`,
+          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
           { status, feedback: this.feedback },
           this.getHeaders()
         )
@@ -361,7 +361,7 @@ export default {
     async saveFeedback() {
       try {
         await axios.patch(
-          `https://placeme-api.up.railway.app/company/application_update/${this.selectedApp.id}`,
+          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
           { status: this.selectedApp.status, feedback: this.feedback },
           this.getHeaders()
         )
@@ -382,7 +382,7 @@ export default {
 
       try {
         await axios.patch(
-          `https://placeme-api.up.railway.app/company/application_update/${this.selectedApp.id}`,
+          `http://localhost:5000/company/application_update/${this.selectedApp.id}`,
           {
             status: "Interview Scheduled",
             feedback: this.feedback,

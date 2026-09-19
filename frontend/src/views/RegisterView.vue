@@ -134,8 +134,8 @@ export default {
 
       const url =
         this.role === "student"
-          ? "https://placeme-api.up.railway.app/register/student"
-          : "https://placeme-api.up.railway.app/register/company"
+          ? "http://localhost:5000/register/student"
+          : "http://localhost:5000/register/company"
 
       try {
         const res = await axios.post(url, {

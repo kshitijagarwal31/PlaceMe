@@ -21,14 +21,14 @@ def create_app():
     db.init_app(app)
     cache.init_app(app)
     CORS(app, 
-    origins=["https://place-me-one.vercel.app"],
+    origins=["http://localhost:5173"],
     supports_credentials=True,
     methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Authentication-Token"])
 
     @app.after_request
     def after_request(response):
-        response.headers["Access-Control-Allow-Origin"] = "https://place-me-one.vercel.app"
+        response.headers["Access-Control-Allow-Origin"] = "http://localhost:5173"
         response.headers["Access-Control-Allow-Credentials"] = "true"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, PATCH, OPTIONS"
         response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Authentication-Token"
