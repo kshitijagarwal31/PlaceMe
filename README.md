@@ -89,7 +89,7 @@ Add the required values to the `.env` file
 
 ### 3. Run the application
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 ---
